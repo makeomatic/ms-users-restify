@@ -67,8 +67,6 @@ describe('Unit Tests', function testSuite() {
 
     describe('POST /', function registerUserTests() {
       it('returns BadRequest on invalid payload', function test(done) {
-        this.amqp.publishAndWait.returns(Promise.resolve());
-
         client.post(`${PREFIX}/${FAMILY}`, { bad: 'payload' }, function resp(err, req, res, body) {
           try {
             expect(res.headers['content-type']).to.be.eq('application/vnd.api+json');
@@ -85,7 +83,32 @@ describe('Unit Tests', function testSuite() {
           } catch (e) {
             return done(e);
           }
+          done();
+        });
+      });
 
+      it('responds with empty body and code 202 on correct payload as a sign of needed activation', function test(done) {
+        this.amqp.publishAndWait.returns(Promise.resolve({ requiresActivation: true }));
+        const user = {
+          data: {
+            type: 'user',
+            attributes: {
+              username: 'vitaly@example.com',
+              password: '11112222',
+              passwordRepeat: '11112222',
+              firstName: 'Vitaly',
+              lastName: 'Aminev',
+            },
+          },
+        };
+        client.post(`${PREFIX}/${FAMILY}`, user, function resp(err, req, res, body) {
+          try {
+            expect(err).to.be.eq(null);
+            expect(res.statusCode).to.be.eq(202);
+            expect(body).to.be.deep.eq({});
+          } catch (e) {
+            return done(e);
+          }
           done();
         });
       });

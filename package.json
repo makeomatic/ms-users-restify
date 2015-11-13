@@ -28,7 +28,7 @@
     "ms-amqp-validation": "^0.4.1",
     "ms-users-schemas": "^0.1.0",
     "proxy-addr": "^1.0.8",
-    "restify-formatter-jsonapi": "^0.1.0"
+    "restify-formatter-jsonapi": "^0.1.1"
   },
   "devDependencies": {
     "babel-core": "^5.8.33",

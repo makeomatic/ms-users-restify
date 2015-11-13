@@ -51,7 +51,20 @@ exports.post = {
           return transformBody(req, body);
         })
         .then(function attemptToRegister(message) {
-          return amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) });
+          return amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
+            .then(reply => {
+              if (reply.requiresActivation) {
+                res.send(202);
+              } else {
+                res.statusCode = 201;
+                res.meta = { jwt: reply.jwt };
+                return {
+                  type: 'user',
+                  id: reply.user.username,
+                  attributes: reply.user.metadata,
+                };
+              }
+            });
         })
         .asCallback(next);
     },
