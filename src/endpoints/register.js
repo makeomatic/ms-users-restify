@@ -13,7 +13,10 @@ const ROUTE_NAME = 'register';
  * @param  {Object}  body
  * @return {Object}
  */
-function transformBody(req, body) {
+function transformBody(req, input) {
+  req.log.debug('attempting transformation', input);
+
+  const body = input.data.attributes;
   const { password, passwordRepeat } = body;
   if (password !== passwordRepeat) {
     throw new Errors.ValidationError('supplied passwords do not match', 400, '["data.password","data.passwordRepeat"]');
@@ -35,7 +38,7 @@ function transformBody(req, body) {
   };
 }
 
-exports.put = {
+exports.post = {
   path: '/',
   handlers: {
     '1.0.0': function registerUser(req, res, next) {
@@ -43,10 +46,8 @@ exports.put = {
 
       log.debug('attempt to register user');
 
-      return validator
-        .validate('register', req.body)
+      return validator.filter('register', req.body)
         .then(function filteredBody(body) {
-          log.trace('filtered body', body);
           return transformBody(req, body);
         })
         .then(function attemptToRegister(message) {

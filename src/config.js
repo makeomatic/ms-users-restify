@@ -1,4 +1,5 @@
 const ld = require('lodash');
+const proxyaddr = require('proxy-addr');
 const defaultOpts = {
   prefix: 'users',
   postfix: {
@@ -8,7 +9,7 @@ const defaultOpts = {
     register: 5000,
   },
   audience: '*.localhost',
-  trustProxy: false,
+  trustProxy: 'loopback',
 };
 
 let config = ld.merge({}, defaultOpts);
@@ -27,6 +28,7 @@ exports.get = function get() {
  */
 exports.init = function init(conf = {}) {
   config = ld.merge({}, defaultOpts, conf);
+  config.trustProxy = typeof config.trustProxy === 'function' ? config.trustProxy : proxyaddr.compile(config.trustProxy);
 };
 
 /**
