@@ -1,3 +1,5 @@
+const Promise = require('bluebird');
+const Errors = require('common-errors');
 const { expect } = require('chai');
 const restify = require('restify');
 const formatters = require('restify-formatter-jsonapi');
@@ -109,6 +111,87 @@ describe('Unit Tests', function testSuite() {
           } catch (e) {
             return done(e);
           }
+          done();
+        });
+      });
+    });
+
+    describe('POST /validate', function activateSuite() {
+      it('returns BadRequest on invalid payload', function test(done) {
+        client.post(`${PREFIX}/${FAMILY}/validate`, {}, function resp(err, req, res, body) {
+          try {
+            expect(err).to.be.not.eq(null);
+            expect(res.statusCode).to.be.eq(400);
+            expect(err.name).to.be.eq('BadRequestError');
+            expect(body.errors[0].status).to.be.eq('ValidationError');
+            expect(body.errors[0].title).to.be.eq('validation token must be present in query.token');
+            expect(body.errors[0].code).to.be.eq(400);
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('returns error on invalid activation token', function test(done) {
+        this.amqp.publishAndWait.returns(Promise.reject(new Errors.HttpStatusError(403, 'could not decode token')));
+
+        client.post(`${PREFIX}/${FAMILY}/validate?token=invalidtoken`, {}, function resp(err, req, res, body) {
+          try {
+            expect(err).to.be.not.eq(null);
+            expect(res.statusCode).to.be.eq(403);
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
+            expect(body.errors[0].title).to.be.eq('HttpStatusError: could not decode token');
+            expect(body.errors[0].code).to.be.eq(403);
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('returns user on successful actiaftion', function test(done) {
+        this.amqp.publishAndWait.returns(Promise.resolve({
+          jwt: 'nicetoken',
+          user: {
+            username: 'v@example.com',
+            metadata: {
+              '*.localhost': {
+                super: 'man',
+                oops: true,
+              },
+            },
+          },
+        }));
+
+        client.post(`${PREFIX}/${FAMILY}/validate?token=validtoken`, {}, function resp(err, req, res, body) {
+          try {
+            expect(err).to.be.eq(null);
+            expect(res.statusCode).to.be.eq(200);
+            expect(body).to.have.ownProperty('meta');
+            expect(body).to.have.ownProperty('data');
+            expect(body).to.have.ownProperty('links');
+            expect(body).to.not.have.ownProperty('errors');
+            expect(body.meta).to.have.ownProperty('jwt');
+            expect(body.data).to.be.deep.eq({
+              type: 'user',
+              id: 'v@example.com',
+              attributes: {
+                '*.localhost': {
+                  super: 'man',
+                  oops: true,
+                },
+              },
+              links: {
+                self: 'http://localhost:8080/api/users/v%40example.com',
+              },
+            });
+          } catch (e) {
+            return done(e);
+          }
+
           done();
         });
       });

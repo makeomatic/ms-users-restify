@@ -3,7 +3,7 @@ const Errors = require('common-errors');
 const countryData = require('countryjs');
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
-const { getRoute, getTimeout, getAudience, get } = require('../config.js');
+const { getRoute, getTimeout, getAudience, get: getConfig } = require('../config.js');
 
 const ROUTE_NAME = 'register';
 
@@ -34,7 +34,7 @@ function transformBody(req, input) {
     metadata: ld.pick(body, [ 'firstName', 'lastName', 'companyName', 'country', 'city', 'gender', 'birthday', 'phone' ]),
     activate: false,
     audience: getAudience(),
-    ipaddress: proxyaddr(req, get().trustProxy),
+    ipaddress: proxyaddr(req, getConfig().trustProxy),
   };
 }
 
@@ -43,6 +43,7 @@ exports.post = {
   handlers: {
     '1.0.0': function registerUser(req, res, next) {
       const { log, amqp } = req;
+      const config = getConfig();
 
       log.debug('attempt to register user');
 
@@ -54,16 +55,22 @@ exports.post = {
           return amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
             .then(reply => {
               if (reply.requiresActivation) {
-                res.send(202);
-              } else {
-                res.statusCode = 201;
-                res.meta = { jwt: reply.jwt };
-                return {
-                  type: 'user',
-                  id: reply.user.username,
-                  attributes: reply.user.metadata,
-                };
+                return res.send(202);
               }
+
+              res.meta = { jwt: reply.jwt };
+              res.links = {
+                self: config.host + config.attachPoint,
+              };
+
+              const { user } = reply;
+              const id = user.username;
+              res.send(201, {
+                type: 'user',
+                id: id,
+                attributes: user.metadata,
+                links: res.links.self + '/' + encodeURIComponent(id),
+              });
             });
         })
         .asCallback(next);

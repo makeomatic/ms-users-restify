@@ -7,9 +7,12 @@ const defaultOpts = {
   },
   timeouts: {
     register: 5000,
+    activate: 5000,
   },
   audience: '*.localhost',
   trustProxy: 'loopback',
+  host: 'http://localhost:8080',
+  queryTokenField: 'token',
 };
 
 let config = ld.merge({}, defaultOpts);

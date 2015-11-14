@@ -20,6 +20,8 @@ exports.config = require('./config.js').init;
  * @param  {String}        family
  */
 exports.attach = function attach(server, family = 'users', prefix = '/api') {
+  exports.config({ attachPoint: `${prefix}/${family}` });
+
   debug('attaching with family %s and prefix %s', family, prefix);
   ld.forOwn(files, function attachRoute(file, name) {
     debug('attaching file %s', name);
