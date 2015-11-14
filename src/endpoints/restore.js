@@ -1,6 +1,7 @@
 const Errors = require('common-errors');
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
+const auth = Promise.promisify(require('../middleware/auth.js'));
 const { getRoute, getTimeout, get: getConfig } = require('../config.js');
 
 exports.post = {
@@ -56,13 +57,16 @@ exports.patch = {
 
           if (attr.token) {
             message.resetToken = attr.token;
-          } else if (req.user) {
-            message.currentPassword = attr.currentPassword;
-            message.username = req.user.id;
-          } else {
-            throw new Errors.HttpStatusError(401, 'authentication is required');
+            return message;
           }
 
+          return auth(req, res).then(function userIsAuthenticated() {
+            message.currentPassword = attr.currentPassword;
+            message.username = req.user.id;
+            return message;
+          });
+        })
+        .then(function updateBackend(message) {
           return amqp
             .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
             .then(() => {
