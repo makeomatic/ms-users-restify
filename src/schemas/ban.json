@@ -1,0 +1,43 @@
+{
+  "definitions": {
+    "username": {
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 50,
+      "format": "email"
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [ "data" ],
+  "properties": {
+    "data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "type", "id", "attributes" ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [ "user" ]
+        },
+        "id": {
+          "$ref": "#/definitions/username"
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [ "action" ],
+          "properties": {
+            "action": {
+              "type": "boolean"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

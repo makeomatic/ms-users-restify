@@ -29,7 +29,14 @@
     "data": {
       "type": "object",
       "additionalProperties": false,
-      "required": [ "type", "id", "attributes" ],
+      "anyOf": [
+        {
+          "required": [ "type", "attributes" ]
+        },
+        {
+          "required": [ "type", "remove" ]
+        }
+      ],
       "properties": {
         "type": {
           "type": "string",
@@ -41,14 +48,8 @@
         "attributes": {
           "type": "object",
           "additionalProperties": false,
-          "required": [ "password", "passwordRepeat", "firstName", "lastName" ],
+          "minProperties": 1,
           "properties": {
-            "password": {
-              "$ref": "#/definitions/password"
-            },
-            "passwordRepeat": {
-              "$ref": "#/definitions/password"
-            },
             "firstName": {
               "$ref": "#/definitions/str-50"
             },
@@ -79,6 +80,14 @@
               "type": "string",
               "minLength": 6
             }
+          }
+        },
+        "remove": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }

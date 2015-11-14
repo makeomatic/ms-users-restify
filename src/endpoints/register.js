@@ -1,4 +1,5 @@
 const ld = require('lodash');
+const User = require('../models/User.js');
 const Errors = require('common-errors');
 const countryData = require('countryjs');
 const validator = require('../validator.js');
@@ -60,17 +61,10 @@ exports.post = {
 
               res.meta = { jwt: reply.jwt };
               res.links = {
-                self: config.host + config.attachPoint,
+                self: config.host + req.path(),
               };
 
-              const { user } = reply;
-              const id = user.username;
-              res.send(201, {
-                type: 'user',
-                id: id,
-                attributes: user.metadata,
-                links: res.links.self + '/' + encodeURIComponent(id),
-              });
+              res.send(201, User.transform(reply.user, true));
             });
         })
         .asCallback(next);

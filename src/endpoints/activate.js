@@ -1,4 +1,5 @@
 const Errors = require('common-errors');
+const User = require('../models/User.js');
 const { getRoute, getTimeout, getAudience, get: getConfig } = require('../config.js');
 
 const ROUTE_NAME = 'activate';
@@ -6,7 +7,7 @@ const ROUTE_NAME = 'activate';
 exports.post = {
   path: '/validate',
   handlers: {
-    '1.0.0': function registerUser(req, res, next) {
+    '1.0.0': function requestActivate(req, res, next) {
       const config = getConfig();
       const token = req.query[config.queryTokenField];
 
@@ -29,16 +30,7 @@ exports.post = {
             self: config.host + req.path(),
           };
 
-          const response = {
-            type: 'user',
-            id: reply.user.username,
-            attributes: reply.user.metadata,
-            links: {
-              self: config.host + config.attachPoint + '/' + encodeURIComponent(reply.user.username),
-            },
-          };
-
-          res.send(response);
+          res.send(User.transform(reply.user, true));
         })
         .asCallback(next);
     },

@@ -2,14 +2,21 @@ const glob = require('glob');
 const path = require('path');
 const debug = require('debug')('ms-users-restify:adapter');
 
-// load files
-const files = {};
-glob.sync('./endpoints/*.js', { cwd: __dirname })
-  .forEach(function loadModules(file) {
+function loadModule(container) {
+  return function loader(file) {
     debug('loaded file %s', file);
     const parts = file.split('/');
     const name = path.basename(parts.pop(), '.js');
-    files[name] = require(file);
-  });
+    container[name] = require(file);
+  };
+}
 
-module.exports = files;
+// load files
+const files = exports.files = {};
+glob.sync('./endpoints/*.js', { cwd: __dirname })
+  .forEach(loadModule(files));
+
+// load middleware
+const middleware = exports.middleware = {};
+glob.sync('./middleware/*.js', { cwd: __dirname })
+  .forEach(loadModule(middleware));
