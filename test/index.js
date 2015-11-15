@@ -383,6 +383,95 @@ describe('Unit Tests', function testSuite() {
         });
       });
     });
+
+    describe('GET /:id', function getIdSuite() {
+      const path = `${PREFIX}/${FAMILY}/${encodeURIComponent('niceuser@example.com')}`;
+
+      it('rejects to get information about other user because one is not authenicated', function test(done) {
+        client.get(path, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(401);
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
+            expect(body.errors[0].title).to.be.eq('HttpStatusError: authorization required');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('rejects to get information about other user, because one is not an admin', function test(done) {
+        this.amqp.publishAndWait
+          .withArgs('users.verify', { token: 'notadmin', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' })
+          .returns(Promise.resolve({
+            username: 'v@user.com',
+            metadata: {
+              '*.localhost': {
+                roles: [],
+                firstName: 'Vitaly',
+                lastName: 'Aminev',
+              },
+            },
+          }));
+
+        client.get(`${path}?jwt=notadmin`, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(403);
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
+            expect(body.errors[0].title).to.be.eq('HttpStatusError: you can only get information about yourself via /me endpoint');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('returns information about other user when admin is requesting it', function test(done) {
+        this.amqp.publishAndWait
+          .withArgs('users.verify', { token: 'admin', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' }, { timeout: 2000 })
+          .returns(Promise.resolve({
+            username: 'v@user.com',
+            metadata: {
+              '*.localhost': {
+                roles: [ 'admin' ],
+                firstName: 'Vitaly',
+                lastName: 'Aminev',
+              },
+            },
+          }))
+          .withArgs('users.getMetadata', { username: 'niceuser@example.com', audience: '*.localhost' }, { timeout: 5000 })
+          .returns(Promise.resolve({
+            '*.localhost': {
+              roles: [],
+              firstName: 'Niceuser',
+              lastName: 'Borkovich',
+            },
+          }));
+
+        client.get(`${path}?jwt=admin`, (err, req, res, body) => {
+          try {
+            expect(err).to.be.eq(null);
+            expect(res.statusCode).to.be.eq(200);
+            expect(body.data.type).to.be.eq('user');
+            expect(body.data.id).to.be.eq('niceuser@example.com');
+            expect(body.data.attributes).to.be.deep.eq({
+              roles: [],
+              firstName: 'Niceuser',
+              lastName: 'Borkovich',
+            });
+            expect(this.amqp.publishAndWait.calledTwice).to.be.eq(true);
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+    });
   });
 
   afterEach(function teardown() {

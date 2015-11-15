@@ -15,7 +15,7 @@ exports.get = {
       }
 
       if (!req.user.isAdmin()) {
-        return next(new Errors.HttpStatusError(403, 'you can only get information about yourself'));
+        return next(new Errors.HttpStatusError(403, 'you can only get information about yourself via /me endpoint'));
       }
 
       const message = {
@@ -26,8 +26,10 @@ exports.get = {
       return req.amqp
         .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
         .then(reply => {
-          const user = new User(message.username, reply);
-          res.send(user.serialize(true));
+          res.send(User.transform({
+            username: message.username,
+            metadata: reply,
+          }));
         })
         .asCallback(next);
     },
