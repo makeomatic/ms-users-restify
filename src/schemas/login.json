@@ -33,7 +33,7 @@
           "additionalProperties": false,
           "required": [ "password" ],
           "properties": {
-            "action": {
+            "password": {
               "$ref": "#/definitions/password"
             }
           }

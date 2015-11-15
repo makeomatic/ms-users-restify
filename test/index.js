@@ -1,3 +1,4 @@
+const ld = require('lodash');
 const Promise = require('bluebird');
 const Errors = require('common-errors');
 const { expect } = require('chai');
@@ -27,7 +28,7 @@ describe('Unit Tests', function testSuite() {
     this.server = restify.createServer({
       formatters,
       log: bunyan.createLogger({
-        level: 'debug',
+        level: 'warn',
         name: 'request',
         stream: process.stdout,
       }),
@@ -60,7 +61,7 @@ describe('Unit Tests', function testSuite() {
       UsersRestify.attach(this.server, FAMILY, PREFIX);
     });
 
-    describe('POST /', function registerUserTests() {
+    describe('POST / [register]', function registerUserTests() {
       it('returns BadRequest on invalid payload', function test(done) {
         client.post(`${PREFIX}/${FAMILY}`, { bad: 'payload' }, function resp(err, req, res, body) {
           try {
@@ -139,7 +140,10 @@ describe('Unit Tests', function testSuite() {
       });
 
       it('returns error on invalid activation token', function test(done) {
-        this.amqp.publishAndWait.returns(Promise.reject(new Errors.HttpStatusError(403, 'could not decode token')));
+        const pr = Promise.reject(new Errors.HttpStatusError(403, 'could not decode token'));
+        pr.catch(ld.noop);
+
+        this.amqp.publishAndWait.returns(pr);
 
         client.post(`${PREFIX}/${FAMILY}/activate?token=invalidtoken`, {}, (err, req, res, body) => {
           try {
@@ -464,6 +468,90 @@ describe('Unit Tests', function testSuite() {
               lastName: 'Borkovich',
             });
             expect(this.amqp.publishAndWait.calledTwice).to.be.eq(true);
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+    });
+
+    describe('POST /login', function loginTestSuite() {
+      const path = `${PREFIX}/${FAMILY}/login`;
+
+      it('rejects authentication with incorrect payload', function test(done) {
+        client.post(path, {}, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(400);
+            expect(body.errors[0].status).to.be.eq('ValidationError');
+            expect(body.errors[0].code).to.be.eq(400);
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('rejects authentication with incorrect username and password', function test(done) {
+        const msg = { data: { type: 'user', id: 'v@example.com', attributes: { password: 'notreal' } } };
+        const pr = Promise.reject(new Errors.HttpStatusError(403, 'incorrect password'));
+        pr.catch(ld.noop);
+
+        this.amqp.publishAndWait
+          .withArgs('users.login', {
+            username: msg.data.id, audience: '*.localhost', password: msg.data.attributes.password, remoteip: '::ffff:127.0.0.1',
+          }, { timeout: 5000 })
+          .returns(pr);
+
+        client.post(path, msg, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(403);
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
+            expect(body.errors[0].title).to.be.eq('HttpStatusError: incorrect password');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('authenticates on correct username and password', function test(done) {
+        const msg = { data: { type: 'user', id: 'v@example.com', attributes: { password: 'realpassword' } } };
+
+        this.amqp.publishAndWait
+          .withArgs('users.login', {
+            username: msg.data.id, audience: '*.localhost', password: msg.data.attributes.password, remoteip: '::ffff:127.0.0.1',
+          }, { timeout: 5000 })
+          .returns(Promise.resolve({
+            jwt: 'nicetoken',
+            user: {
+              username: msg.data.id,
+              metadata: {
+                '*.localhost': {
+                  roles: [],
+                  firstName: 'niceDude',
+                  lastName: 'notReally',
+                },
+              },
+            },
+          }));
+
+        client.post(path, msg, (err, req, res, body) => {
+          try {
+            expect(err).to.be.eq(null);
+            expect(res.statusCode).to.be.eq(200);
+            expect(body.data.type).to.be.eq('user');
+            expect(body.data.id).to.be.eq(msg.data.id);
+            expect(body.data.attributes).to.be.deep.eq({
+              roles: [],
+              firstName: 'niceDude',
+              lastName: 'notReally',
+            });
           } catch (e) {
             return done(e);
           }
