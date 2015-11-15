@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const Errors = require('common-errors');
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');

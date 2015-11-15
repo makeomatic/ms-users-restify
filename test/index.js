@@ -42,16 +42,9 @@ describe('Unit Tests', function testSuite() {
     }));
     this.server.use(restify.requestLogger());
     this.server.use((req, res, next) => {
-      res.setHeader('content-type', 'application/vnd.api+json');
       req.amqp = this.amqp;
       next();
     });
-    this.server.on('after', restify.auditLogger({
-      log: bunyan.createLogger({
-        name: 'audit',
-        stream: process.stderr,
-      }),
-    }));
 
     this.server.listen(PORT, done);
     enableDestroy(this.server);
@@ -94,8 +87,8 @@ describe('Unit Tests', function testSuite() {
         const user = {
           data: {
             type: 'user',
+            id: 'vitaly@example.com',
             attributes: {
-              username: 'vitaly@example.com',
               password: '11112222',
               passwordRepeat: '11112222',
               firstName: 'Vitaly',
@@ -179,10 +172,8 @@ describe('Unit Tests', function testSuite() {
               type: 'user',
               id: 'v@example.com',
               attributes: {
-                '*.localhost': {
-                  super: 'man',
-                  oops: true,
-                },
+                super: 'man',
+                oops: true,
               },
               links: {
                 self: 'http://localhost:8080/api/users/v%40example.com',

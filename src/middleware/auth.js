@@ -37,6 +37,7 @@ module.exports = function registerUser(req, res, next) {
     .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
     .then(reply => {
       req.user = User.deserialize(reply);
+      req.log = req.log.child({ user: req.user.id });
     })
     .asCallback(next);
 };
