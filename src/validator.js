@@ -5,6 +5,6 @@ const Validator = require('ms-amqp-validation');
 const validator = new Validator(require('ms-users-schemas'));
 
 // init extended schemas
-validator.init('./schemas', false, true);
+validator.init('../schemas', false, true);
 
 module.exports = validator;
