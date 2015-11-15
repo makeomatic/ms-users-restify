@@ -768,20 +768,137 @@ describe('Unit Tests', function testSuite() {
     });
 
     describe('PATCH /:id', function updateUserTest() {
-      it('rejects to update user metadata on malformed payload', function test() {
+      const path = `${PREFIX}/${FAMILY}`;
 
+      it('rejects to update user metadata on malformed payload', function test(done) {
+        this.amqp.publishAndWait.returns(Promise.resolve({
+          username: 'nice@example.com',
+          metadata: {
+            '*.localhost': {
+
+            },
+          },
+        }));
+
+        client.patch(`${path}/me?jwt=user`, {}, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(400);
+            expect(body.errors[0].status).to.be.eq('ValidationError');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
       });
 
-      it('allows to update user metadata when user updates self', function test() {
+      it('allows to update user metadata when user updates self', function test(done) {
+        this.amqp.publishAndWait.returns(Promise.resolve({
+          username: 'nice@example.com',
+          metadata: {
+            '*.localhost': {
+              firstName: 'Nice',
+            },
+          },
+        }));
 
+        const msg = {
+          data: {
+            type: 'user',
+            attributes: {
+              lastName: 'Morris',
+            },
+          },
+        };
+
+        client.patch(`${path}/me?jwt=user`, msg, (err, req, res, body) => {
+          try {
+            expect(err).to.be.eq(null);
+            expect(res.statusCode).to.be.eq(204);
+            expect(body).to.be.deep.eq({});
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
       });
 
-      it('rejects to update user metadata, when user is not admin and tries to update metadata for others', function test() {
+      it('rejects to update user metadata, when user is not admin and tries to update metadata for others', function test(done) {
+        this.amqp.publishAndWait.returns(Promise.resolve({
+          username: 'nice@example.com',
+          metadata: {
+            '*.localhost': {
+              firstName: 'Nice',
+            },
+          },
+        }));
 
+        const msg = {
+          data: {
+            type: 'user',
+            attributes: {
+              lastName: 'Morris',
+            },
+          },
+        };
+
+        client.patch(`${path}/other@user.com?jwt=user`, msg, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(403);
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
+            expect(body.errors[0].title).to.be.eq('HttpStatusError: insufficient right to perform this operation');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
       });
 
-      it('allows to update other user\'s metadata, when user is admin', function test() {
+      it('allows to update other user\'s metadata, when user is admin', function test(done) {
+        this.amqp.publishAndWait
+          .withArgs('users.verify', { token: 'user', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' }, { timeout: 2000 })
+          .returns(Promise.resolve({
+            username: 'nice@example.com',
+            metadata: {
+              '*.localhost': {
+                roles: [ 'admin' ],
+                firstName: 'Nice',
+              },
+            },
+          }))
+          .withArgs('users.updateMetadata', { username: 'other@user.com', audience: '*.localhost', metadata: {
+            $set: {
+              lastName: 'Morris',
+            },
+            $remove: [ 'vasya' ],
+          }}, { timeout: 5000 })
+          .returns(Promise.resolve(true));
 
+        const msg = {
+          data: {
+            type: 'user',
+            attributes: {
+              lastName: 'Morris',
+            },
+            remove: [ 'vasya' ],
+          },
+        };
+
+        client.patch(`${path}/other@user.com?jwt=user`, msg, (err, req, res, body) => {
+          try {
+            expect(err).to.be.eq(null);
+            expect(res.statusCode).to.be.eq(204);
+            expect(body).to.be.deep.eq({});
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
       });
     });
   });

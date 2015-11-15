@@ -12,6 +12,7 @@ const defaultOpts = {
     challenge: 'challenge',
     verify: 'verify',
     getMetadata: 'getMetadata',
+    updateMetadata: 'updateMetadata',
   },
   timeouts: {
     register: 5000,
@@ -23,6 +24,7 @@ const defaultOpts = {
     challenge: 5000,
     verify: 2000,
     getMetadata: 5000,
+    updateMetadata: 5000,
   },
   audience: '*.localhost',
   trustProxy: 'loopback',
