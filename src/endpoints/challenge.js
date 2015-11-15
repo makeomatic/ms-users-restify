@@ -11,7 +11,8 @@ exports.post = {
 
       log.debug('requesting to get a challenge');
 
-      return validator.filter('challenge', req.body)
+      return validator
+        .filter('challenge', req.body)
         .then(function attemptToRegister(body) {
           const message = {
             type: 'email',

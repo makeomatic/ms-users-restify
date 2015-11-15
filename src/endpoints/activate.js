@@ -5,7 +5,7 @@ const { getRoute, getTimeout, getAudience, get: getConfig } = require('../config
 const ROUTE_NAME = 'activate';
 
 exports.post = {
-  path: '/validate',
+  path: '/activate',
   handlers: {
     '1.0.0': function requestActivate(req, res, next) {
       const config = getConfig();

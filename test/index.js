@@ -96,11 +96,22 @@ describe('Unit Tests', function testSuite() {
             },
           },
         };
-        client.post(`${PREFIX}/${FAMILY}`, user, function resp(err, req, res, body) {
+        client.post(`${PREFIX}/${FAMILY}`, user, (err, req, res, body) => {
           try {
             expect(err).to.be.eq(null);
             expect(res.statusCode).to.be.eq(202);
             expect(body).to.be.deep.eq({});
+            expect(this.amqp.publishAndWait.calledWithExactly('users.register', {
+              username: user.data.id,
+              password: user.data.attributes.password,
+              metadata: {
+                firstName: user.data.attributes.firstName,
+                lastName: user.data.attributes.lastName,
+              },
+              activate: false,
+              audience: '*.localhost',
+              ipaddress: '::ffff:127.0.0.1',
+            }, { timeout: 5000 })).to.be.eq(true);
           } catch (e) {
             return done(e);
           }
@@ -109,9 +120,9 @@ describe('Unit Tests', function testSuite() {
       });
     });
 
-    describe('POST /validate', function activateSuite() {
+    describe('POST /activate', function activateSuite() {
       it('returns BadRequest on invalid payload', function test(done) {
-        client.post(`${PREFIX}/${FAMILY}/validate`, {}, function resp(err, req, res, body) {
+        client.post(`${PREFIX}/${FAMILY}/activate`, {}, function resp(err, req, res, body) {
           try {
             expect(err).to.be.not.eq(null);
             expect(res.statusCode).to.be.eq(400);
@@ -130,13 +141,18 @@ describe('Unit Tests', function testSuite() {
       it('returns error on invalid activation token', function test(done) {
         this.amqp.publishAndWait.returns(Promise.reject(new Errors.HttpStatusError(403, 'could not decode token')));
 
-        client.post(`${PREFIX}/${FAMILY}/validate?token=invalidtoken`, {}, function resp(err, req, res, body) {
+        client.post(`${PREFIX}/${FAMILY}/activate?token=invalidtoken`, {}, (err, req, res, body) => {
           try {
             expect(err).to.be.not.eq(null);
             expect(res.statusCode).to.be.eq(403);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
             expect(body.errors[0].title).to.be.eq('HttpStatusError: could not decode token');
             expect(body.errors[0].code).to.be.eq(403);
+            expect(this.amqp.publishAndWait.calledWithExactly('users.activate', {
+              token: 'invalidtoken',
+              audience: '*.localhost',
+              namespace: 'activate',
+            }, { timeout: 5000 })).to.be.eq(true);
           } catch (e) {
             return done(e);
           }
@@ -159,7 +175,7 @@ describe('Unit Tests', function testSuite() {
           },
         }));
 
-        client.post(`${PREFIX}/${FAMILY}/validate?token=validtoken`, {}, function resp(err, req, res, body) {
+        client.post(`${PREFIX}/${FAMILY}/activate?token=validtoken`, {}, (err, req, res, body) => {
           try {
             expect(err).to.be.eq(null);
             expect(res.statusCode).to.be.eq(200);
@@ -179,6 +195,186 @@ describe('Unit Tests', function testSuite() {
                 self: 'http://localhost:8080/api/users/v%40example.com',
               },
             });
+            expect(this.amqp.publishAndWait.calledWithExactly('users.activate', {
+              token: 'validtoken',
+              audience: '*.localhost',
+              namespace: 'activate',
+            }, { timeout: 5000 })).to.be.eq(true);
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+    });
+
+    describe('POST /challenge', function challengeSuite() {
+      it('rejects to send a challenge when id is missing', function test(done) {
+        client.post(`${PREFIX}/${FAMILY}/challenge`, {}, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(400);
+            expect(body).to.have.ownProperty('errors');
+            expect(body.errors[0].status).to.be.eq('ValidationError');
+            expect(body.errors[0].title).to.be.eq('route "challenge" validation failed');
+            expect(body.errors[0]).to.have.ownProperty('detail');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('requests challenge when payload is correct', function test(done) {
+        const message = {
+          data: {
+            type: 'user',
+            id: 'v@example.com',
+          },
+        };
+
+        this.amqp.publishAndWait.returns(Promise.resolve(true));
+
+        client.post(`${PREFIX}/${FAMILY}/challenge`, message, (err, req, res, body) => {
+          try {
+            expect(err).to.be.eq(null);
+            expect(res.statusCode).to.be.eq(202);
+            expect(body).to.be.deep.eq({});
+            expect(this.amqp.publishAndWait.calledWithExactly('users.challenge', { type: 'email', username: message.data.id }, { timeout: 5000 })).to.be.eq(true);
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+    });
+
+    describe('POST /ban', function banSuite() {
+      const message = {
+        data: {
+          type: 'user',
+          id: 'v@example.com',
+          attributes: {
+            ban: true,
+          },
+        },
+      };
+
+      it('reject to ban when user is not authenicated', function test(done) {
+        client.patch(`${PREFIX}/${FAMILY}/ban`, message, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(401);
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
+            expect(body.errors[0].title).to.be.eq('HttpStatusError: authorization required');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('reject to ban when user is not an admin', function test(done) {
+        this.amqp.publishAndWait
+          .withArgs('users.verify', { token: 'notadmin', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' })
+          .returns(Promise.resolve({
+            username: 'v@notadmin.com',
+            metadata: {
+              '*.localhost': {
+                roles: [],
+              },
+            },
+          }));
+
+        client.patch(`${PREFIX}/${FAMILY}/ban?jwt=notadmin`, message, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(403);
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
+            expect(body.errors[0].title).to.be.eq('HttpStatusError: you are not authorized to perform this action');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('able to ban user when we have enough rights', function test(done) {
+        this.amqp.publishAndWait
+          .withArgs('users.verify', { token: 'admin', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' })
+          .returns(Promise.resolve({
+            username: 'v@admin.com',
+            metadata: {
+              '*.localhost': {
+                roles: [ 'admin' ],
+              },
+            },
+          }))
+          .withArgs('users.ban', { type: 'email', username: message.data.id, ban: true, remoteip: '::ffff:127.0.0.1', whom: 'v@admin.com' }, { timeout: 5000 })
+          .returns(Promise.resolve(true));
+
+        client.patch(`${PREFIX}/${FAMILY}/ban?jwt=admin`, message, (err, req, res, body) => {
+          try {
+            expect(err).to.be.eq(null);
+            expect(res.statusCode).to.be.eq(204);
+            expect(body).to.be.deep.eq({});
+            expect(this.amqp.publishAndWait.calledTwice).to.be.eq(true);
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+    });
+
+    describe('GET /me', function meSuite() {
+      it('rejects to return data when JWT token is invalid', function test(done) {
+        client.get(`${PREFIX}/${FAMILY}/me`, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(401);
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
+            expect(body.errors[0].title).to.be.eq('HttpStatusError: authorization required');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('returns user data when JWT token is valid', function test(done) {
+        this.amqp.publishAndWait
+          .withArgs('users.verify', { token: 'validtoken', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' })
+          .returns(Promise.resolve({
+            username: 'v@user.com',
+            metadata: {
+              '*.localhost': {
+                roles: [],
+                firstName: 'Vitaly',
+                lastName: 'Aminev',
+              },
+            },
+          }));
+
+        client.get(`${PREFIX}/${FAMILY}/me?jwt=validtoken`, (err, req, res, body) => {
+          try {
+            expect(err).to.be.eq(null);
+            expect(res.statusCode).to.be.eq(200);
+            expect(body.data.type).to.be.eq('user');
+            expect(body.data.id).to.be.eq('v@user.com');
+            expect(body.data.attributes).to.be.deep.eq({
+              roles: [],
+              firstName: 'Vitaly',
+              lastName: 'Aminev',
+            });
+            expect(this.amqp.publishAndWait.calledOnce).to.be.eq(true);
           } catch (e) {
             return done(e);
           }

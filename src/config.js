@@ -9,6 +9,8 @@ const defaultOpts = {
     updatePassword: 'updatePassword',
     requestPassword: 'requestPassword',
     login: 'login',
+    challenge: 'challenge',
+    verify: 'verify',
   },
   timeouts: {
     register: 5000,
@@ -17,6 +19,8 @@ const defaultOpts = {
     requestPassword: 5000,
     ban: 5000,
     login: 5000,
+    challenge: 5000,
+    verify: 2000,
   },
   audience: '*.localhost',
   trustProxy: 'loopback',

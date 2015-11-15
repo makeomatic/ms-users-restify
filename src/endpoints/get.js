@@ -1,4 +1,3 @@
-const Promise = require('bluebird');
 const User = require('../models/User.js');
 const Errors = require('common-errors');
 const { getRoute, getAudience, getTimeout, get: getConfig } = require('../config.js');
@@ -15,24 +14,22 @@ exports.get = {
         return next(`${config.family}.me.get`);
       }
 
-      return Promise.try(function verifyRights() {
-        if (!req.user.isAdmin()) {
-          throw new Errors.HttpStatusError(403, 'you can only get information about yourself');
-        }
+      if (!req.user.isAdmin()) {
+        return next(new Errors.HttpStatusError(403, 'you can only get information about yourself'));
+      }
 
-        const message = {
-          username: req.params.id,
-          audience: getAudience(),
-        };
+      const message = {
+        username: req.params.id,
+        audience: getAudience(),
+      };
 
-        return req.amqp
-          .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
-          .then(reply => {
-            const user = new User(message.username, reply);
-            res.send(user.serialize(true));
-          });
-      })
-      .asCallback(next);
+      return req.amqp
+        .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
+        .then(reply => {
+          const user = new User(message.username, reply);
+          res.send(user.serialize(true));
+        })
+        .asCallback(next);
     },
   },
 };

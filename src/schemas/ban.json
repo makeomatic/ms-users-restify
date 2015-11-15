@@ -26,9 +26,9 @@
         "attributes": {
           "type": "object",
           "additionalProperties": false,
-          "required": [ "action" ],
+          "required": [ "ban" ],
           "properties": {
-            "action": {
+            "ban": {
               "type": "boolean"
             },
             "reason": {

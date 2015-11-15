@@ -17,8 +17,9 @@ const ROUTE_NAME = 'register';
 function transformBody(req, input) {
   req.log.debug('attempting transformation', input);
 
-  const body = input.data.attributes;
-  const { password, passwordRepeat } = body;
+  const body = input.data;
+  const { attributes } = body;
+  const { password, passwordRepeat } = attributes;
   if (password !== passwordRepeat) {
     throw new Errors.ValidationError('supplied passwords do not match', 400, '["data.password","data.passwordRepeat"]');
   }
@@ -30,9 +31,9 @@ function transformBody(req, input) {
   }
 
   return {
-    username: body.username,
+    username: body.id,
     password,
-    metadata: ld.pick(body, [ 'firstName', 'lastName', 'companyName', 'country', 'city', 'gender', 'birthday', 'phone' ]),
+    metadata: ld.pick(attributes, [ 'firstName', 'lastName', 'companyName', 'country', 'city', 'gender', 'birthday', 'phone' ]),
     activate: false,
     audience: getAudience(),
     ipaddress: proxyaddr(req, getConfig().trustProxy),
