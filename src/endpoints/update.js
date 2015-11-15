@@ -5,7 +5,7 @@ const { getAudience, getRoute, getTimeout } = require('../config.js');
 const ROUTE_NAME = 'updateMetadata';
 
 exports.patch = {
-  path: '/me',
+  path: '/:id',
   middleware: [ 'auth' ],
   handlers: {
     '1.0.0': function updateUser(req, res, next) {
@@ -14,13 +14,15 @@ exports.patch = {
       return validator.validate('update', req.body)
         .then(function validatedBody(body) {
           const { data } = body;
+          const inputId = req.params.id;
+          const id = inputId === 'me' ? req.user.id : inputId;
 
-          if (data.id && !req.user.isAdmin()) {
+          if (inputId !== 'me' && !req.user.isAdmin()) {
             throw new Errors.HttpStatusError(403, 'insufficient right to perform this operation');
           }
 
           const message = {
-            username: data.id || req.user.id,
+            username: id,
             audience: getAudience(),
             metadata: {},
           };

@@ -560,6 +560,230 @@ describe('Unit Tests', function testSuite() {
         });
       });
     });
+
+    describe('Password Updates', function passwordUpdateTestSuite() {
+      const path = `${PREFIX}/${FAMILY}/reset`;
+
+      describe('POST /reset', function requestPasswordResetEmailTest() {
+        it('rejects to reset a password on malformed payload', function test(done) {
+          client.post(path, {}, (err, req, res, body) => {
+            try {
+              expect(err).to.not.be.eq(null);
+              expect(res.statusCode).to.be.eq(400);
+              expect(body.errors[0].status).to.be.eq('ValidationError');
+            } catch (e) {
+              return done(e);
+            }
+
+            done();
+          });
+        });
+
+        it('responses with 202 when payload is valid', function test(done) {
+          this.amqp.publishAndWait
+            .withArgs('users.requestPassword', { type: 'email', username: 'v@example.com', remoteip: '::ffff:127.0.0.1' })
+            .returns(Promise.resolve(true));
+
+          const msg = {
+            data: {
+              type: 'user',
+              id: 'v@example.com',
+            },
+          };
+
+          client.post(path, msg, (err, req, res, body) => {
+            try {
+              expect(err).to.be.eq(null);
+              expect(res.statusCode).to.be.eq(202);
+              expect(body).to.be.deep.eq({});
+              expect(this.amqp.publishAndWait.calledOnce).to.be.eq(true);
+            } catch (e) {
+              return done(e);
+            }
+
+            done();
+          });
+        });
+      });
+
+      describe('PATCH /reset', function resetPasswordTest() {
+        it('rejects to update password on malformed payload', function test(done) {
+          client.patch(path, {}, (err, req, res, body) => {
+            try {
+              expect(err).to.not.be.eq(null);
+              expect(res.statusCode).to.be.eq(400);
+              expect(body.errors[0].status).to.be.eq('ValidationError');
+            } catch (e) {
+              return done(e);
+            }
+
+            done();
+          });
+        });
+
+        it('rejects to update password on invalid token', function test(done) {
+          const msg = {
+            data: {
+              type: 'user',
+              attributes: {
+                token: 'invalidtoken',
+                password: '123456789',
+                passwordRepeat: '123456789',
+              },
+            },
+          };
+
+          const pr = Promise.reject(new Errors.HttpStatusError(403, 'could not decode token'));
+          pr.catch(ld.noop);
+
+          this.amqp.publishAndWait
+            .withArgs('users.updatePassword', {
+              resetToken: msg.data.attributes.token, newPassword: msg.data.attributes.password, remoteip: '::ffff:127.0.0.1',
+            }, { timeout: 5000 })
+            .returns(pr);
+
+          client.patch(path, msg, (err, req, res, body) => {
+            try {
+              expect(err).to.not.be.eq(null);
+              expect(res.statusCode).to.be.eq(403);
+              expect(body.errors[0].status).to.be.eq('HttpStatusError');
+              expect(body.errors[0].title).to.be.eq('HttpStatusError: could not decode token');
+              expect(this.amqp.publishAndWait.calledOnce).to.be.eq(true);
+            } catch (e) {
+              return done(e);
+            }
+
+            done();
+          });
+        });
+
+        it('rejects to update password when user is not signed in', function test(done) {
+          const msg = {
+            data: {
+              type: 'user',
+              attributes: {
+                currentPassword: 'notreallyapassword',
+                password: '123456789',
+                passwordRepeat: '123456789',
+              },
+            },
+          };
+
+          client.patch(path, msg, (err, req, res, body) => {
+            try {
+              expect(err).to.not.be.eq(null);
+              expect(res.statusCode).to.be.eq(401);
+              expect(body.errors[0].status).to.be.eq('HttpStatusError');
+              expect(body.errors[0].title).to.be.eq('HttpStatusError: authorization required');
+            } catch (e) {
+              return done(e);
+            }
+
+            done();
+          });
+        });
+
+        it('updates password on valid token and new password, user not authenticated', function test(done) {
+          const msg = {
+            data: {
+              type: 'user',
+              attributes: {
+                token: 'validtoken',
+                password: '123456789',
+                passwordRepeat: '123456789',
+              },
+            },
+          };
+
+          this.amqp.publishAndWait
+            .withArgs('users.updatePassword', {
+              resetToken: msg.data.attributes.token, newPassword: msg.data.attributes.password, remoteip: '::ffff:127.0.0.1',
+            }, { timeout: 5000 })
+            .returns(Promise.resolve(true));
+
+          client.patch(path, msg, (err, req, res, body) => {
+            try {
+              expect(err).to.be.eq(null);
+              expect(res.statusCode).to.be.eq(204);
+              expect(this.amqp.publishAndWait.calledOnce).to.be.eq(true);
+              expect(body).to.be.deep.eq({});
+            } catch (e) {
+              return done(e);
+            }
+
+            done();
+          });
+        });
+
+        it('updates password on valid current password and diff new password, user authenticated', function test(done) {
+          const msg = {
+            data: {
+              type: 'user',
+              attributes: {
+                currentPassword: 'nicepassword',
+                password: '123456789',
+                passwordRepeat: '123456789',
+              },
+            },
+          };
+
+          this.amqp.publishAndWait
+            .withArgs('users.verify', {
+              token: 'validusertoken',
+              audience: '*.localhost',
+              remoteip: '::ffff:127.0.0.1',
+            }, { timeout: 2000 })
+            .returns(Promise.resolve({
+              username: 'niceuser@example.com',
+              metadata: {
+                '*.localhost': {
+                  roles: [],
+                  firstName: 'Test',
+                  lastName: 'User',
+                },
+              },
+            }))
+            .withArgs('users.updatePassword', {
+              currentPassword: msg.data.attributes.currentPassword,
+              newPassword: msg.data.attributes.password,
+              remoteip: '::ffff:127.0.0.1',
+              username: 'niceuser@example.com',
+            }, { timeout: 5000 })
+            .returns(Promise.resolve(true));
+
+          client.patch(`${path}?jwt=validusertoken`, msg, (err, req, res, body) => {
+            try {
+              expect(err).to.be.eq(null);
+              expect(res.statusCode).to.be.eq(204);
+              expect(body).to.be.deep.eq({});
+              expect(this.amqp.publishAndWait.calledTwice).to.be.eq(true);
+            } catch (e) {
+              return done(e);
+            }
+
+            done();
+          });
+        });
+      });
+    });
+
+    describe('PATCH /:id', function updateUserTest() {
+      it('rejects to update user metadata on malformed payload', function test() {
+
+      });
+
+      it('allows to update user metadata when user updates self', function test() {
+
+      });
+
+      it('rejects to update user metadata, when user is not admin and tries to update metadata for others', function test() {
+
+      });
+
+      it('allows to update other user\'s metadata, when user is admin', function test() {
+
+      });
+    });
   });
 
   afterEach(function teardown() {

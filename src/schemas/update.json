@@ -42,9 +42,6 @@
           "type": "string",
           "enum": [ "user" ]
         },
-        "id": {
-          "$ref": "#/definitions/username"
-        },
         "attributes": {
           "type": "object",
           "additionalProperties": false,
