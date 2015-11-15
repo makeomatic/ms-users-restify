@@ -1,6 +1,6 @@
 {
   "name": "ms-users-restify",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Core of the microservice for handling users",
   "main": "./lib/index.js",
   "scripts": {
@@ -27,8 +27,7 @@
     "glob": "^6.0.1",
     "ms-amqp-validation": "^0.4.1",
     "ms-users-schemas": "^0.1.0",
-    "proxy-addr": "^1.0.8",
-    "restify-formatter-jsonapi": "^0.1.4"
+    "proxy-addr": "^1.0.8"
   },
   "devDependencies": {
     "babel-core": "^5.8.33",
@@ -42,6 +41,7 @@
     "mocha": "^2.3.3",
     "restify": "^4.0.3",
     "server-destroy": "^1.0.1",
-    "sinon": "^1.17.2"
+    "sinon": "^1.17.2",
+    "restify-formatter-jsonapi": "^0.1.4"
   }
 }
