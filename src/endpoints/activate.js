@@ -1,9 +1,26 @@
 const Errors = require('common-errors');
 const User = require('../models/User.js');
 const { getRoute, getTimeout, getAudience, get: getConfig } = require('../config.js');
-
 const ROUTE_NAME = 'activate';
 
+/**
+ * @api {post} /activate Activate registered user
+ * @apiVersion 1.0.0
+ * @apiName ActivateUser
+ * @apiGroup Users
+ * @apiPermission none
+ *
+ * @apiDescription Attempts to activate the user, and, if successful, returns authentication token and activated user info
+ *
+ * @apiParam (Query) {String} token Token from the user's email
+ *
+ * @apiExample {curl} Example usage:
+ * 		curl -i -X POST -H 'Accept-Version: *' https://api-users.sandbox.matic.ninja/api/users/activate?token=xxx
+ *
+ * @apiUse UserAuthResponse
+ * @apiUse ValidationError
+ *
+ */
 exports.post = {
   path: '/activate',
   handlers: {

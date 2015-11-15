@@ -21,8 +21,3 @@ users.config({ prefix: 'niceusers', postfix: {
 // attaches handlers
 users.attach(server, family, prefix);
 ```
-
-## Roadmap
-
-1. Add models
-2. Add type definitions and move then to external schemas for json
