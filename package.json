@@ -47,7 +47,8 @@
   },
   "apidoc": {
     "version": "1.0.0",
-    "title": "Users family documentation",
+    "name": "Users family documentation",
+    "description": "Documentation for user-based actions",
     "url": "https://api-users.sandbox.matic.ninja/api/users"
   }
 }
