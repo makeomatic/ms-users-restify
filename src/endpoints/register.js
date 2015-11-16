@@ -40,6 +40,37 @@ function transformBody(req, input) {
   };
 }
 
+/**
+ * @api {post} / Registers new user
+ * @apiVersion 1.0.0
+ * @apiName Register
+ * @apiGroup Users
+ * @apiPermission none
+ *
+ * @apiDescription Registers user in the system and send email validation request, so that the user can activate the account
+ *
+ * @apiParam (Body) {Object}                         data                           data container
+ * @apiParam (Body) {String="user"}                  data.type                      data type
+ * @apiParam (Body) {String{6..50}}                  data.id                        new username, always an email
+ * @apiParam (Body) {Object}                         data.attributes                attributes container
+ * @apiParam (Body) {String{6..50}}                  data.attributes.password       user's password
+ * @apiParam (Body) {String{6..50}}                  data.attributes.passwordRepeat make sure that user typed in the same password
+ * @apiParam (Body) {String{1..150}}                 data.attributes.firstName      user's given name
+ * @apiParam (Body) {String{1..150}}                 data.attributes.lastName       user's surname
+ * @apiParam (Body) {String{3}}                      [data.attributes.country]      ISO3 country code, e.g "USA" or "RUS"
+ * @apiParam (Body) {String{1..150}}                 [data.attributes.city]         free-form input city name
+ * @apiParam (Body) {String="female","male","other"} [data.attributes.gender]       user's gender
+ * @apiParam (Body) {String="YYYY.MM.DD"}            [data.attributes.birthday]     birthday in the format of YYYY.MM.DD
+ * @apiParam (Body) {String{6..20}}                  [data.attributes.phone]        user's phone, no validation
+ *
+ * @apiUse ValidationError
+ * @apiUse PreconditionFailedError
+ * @apiUse ForbiddenResponse
+ * @apiUse TooManyRequestsError
+ *
+ * @apiSuccessExample {json} Success-Response:
+ * 		HTTP/1.1 202 Accepted
+ */
 exports.post = {
   path: '/',
   handlers: {

@@ -20,6 +20,7 @@
  *
  * @apiUse ValidationError
  * @apiUse UnauthorizedError
+ * @apiUse ForbiddenResponse
  *
  * @apiUse UserAuthResponse
  */
