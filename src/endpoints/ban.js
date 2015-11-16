@@ -20,6 +20,21 @@ const { getRoute, getTimeout, get: getConfig } = require('../config.js');
  * @apiParam (Body) {Boolean}       data.attributes.ban       when `true` - locks account, when `false` - unlocks it
  * @apiParam (Body) {String{1..}}   [data.attributes.reason]  optional reason for this action
  *
+ * @apiExample {curl} Example usage:
+ * 		curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
+ * 		  -H 'Accept-Encoding: gzip, deflate' \
+ * 		  -H 'Content-Type: applicaion/vnd.api+json' \
+ * 		  "https://api-users.sandbox.matic.ninja/api/users/v%40example.com/ban" \
+ * 		  -d '{
+ * 		  	"data": {
+ * 		  		"type": "user",
+ * 		  		"attributes": {
+ * 		  			"ban": true,
+ * 		  			"reason": "fraudulent activity"
+ * 		  		}
+ * 		  	}
+ * 		  }'
+ *
  * @apiUse ValidationError
  * @apiUse UnauthorizedError
  * @apiUse ForbiddenResponse

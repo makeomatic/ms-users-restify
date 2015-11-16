@@ -104,6 +104,55 @@
  */
 
 /**
+ * @apiDefine PreconditionFailedError
+ *
+ * @apiError (Code 412) {Object}    meta           response meta information
+ * @apiError (Code 412) {String}    meta.id        request id
+ * @apiError (Code 412) {Object[]}  errors         array of errors
+ * @apiError (Code 412) {String}    errors.status  text code of error
+ * @apiError (Code 412) {String}    errors.title   short error description
+ * @apiError (Code 412) {String}    errors.code    code of error
+ *
+ * @apiErrorExample {json} PreconditionFailedError:
+ * 		HTTP/1.1 412 Precondition Failed
+ * 		{
+ * 			"meta": {
+ * 				"id": "request-id"
+ * 			},
+ * 			"errors": [{
+ * 				"status": "HttpStatusError",
+ * 				"code": 412,
+ * 				"title": "user is already active",
+ * 			}]
+ * 		}
+ *
+ */
+
+/**
+ * @apiDefine TooManyRequestsError
+ *
+ * @apiError (Code 429) {Object}    meta           response meta information
+ * @apiError (Code 429) {String}    meta.id        request id
+ * @apiError (Code 429) {Object[]}  errors         array of errors
+ * @apiError (Code 429) {String}    errors.status  text code of error
+ * @apiError (Code 429) {String}    errors.title   short error description
+ * @apiError (Code 429) {String}    errors.code    code of error
+ *
+ * @apiErrorExample {json} PreconditionFailedError:
+ * 		HTTP/1.1 429 Too Many Requests
+ * 		{
+ * 			"meta": {
+ * 				"id": "request-id"
+ * 			},
+ * 			"errors": [{
+ * 				"status": "HttpStatusError",
+ * 				"code": 429,
+ * 				"title": "you have requested to perform this action too many times",
+ * 			}]
+ * 		}
+ */
+
+/**
  * @apiDefine UserAuthResponse
  *
  * @apiSuccess (Code 200) {Object} meta              response meta information

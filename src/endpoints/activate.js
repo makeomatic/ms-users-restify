@@ -16,7 +16,7 @@ const ROUTE_NAME = 'activate';
  *
  * @apiExample {curl} Example usage:
  * 		curl -i -X POST -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' -H 'Accept-Encoding: gzip, deflate' \
- * 		https://api-users.sandbox.matic.ninja/api/users/activate?token=xxx
+ * 		"https://api-users.sandbox.matic.ninja/api/users/activate?token=xxx"
  *
  * @apiUse UserAuthResponse
  * @apiUse ValidationError
