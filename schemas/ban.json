@@ -14,14 +14,11 @@
     "data": {
       "type": "object",
       "additionalProperties": false,
-      "required": [ "type", "id", "attributes" ],
+      "required": [ "type", "attributes" ],
       "properties": {
         "type": {
           "type": "string",
           "enum": [ "user" ]
-        },
-        "id": {
-          "$ref": "#/definitions/username"
         },
         "attributes": {
           "type": "object",

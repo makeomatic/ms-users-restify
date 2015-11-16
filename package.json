@@ -48,7 +48,6 @@
   "apidoc": {
     "version": "1.0.0",
     "title": "Users family documentation",
-    "url": "https://api-users.sandbox.matic.ninja/api/users",
-    "sampleUrl": "https://api-users.sandbox.matic.ninja/api/users"
+    "url": "https://api-users.sandbox.matic.ninja/api/users"
   }
 }

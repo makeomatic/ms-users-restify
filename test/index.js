@@ -256,11 +256,10 @@ describe('Unit Tests', function testSuite() {
       });
     });
 
-    describe('POST /ban', function banSuite() {
+    describe('POST /:id/ban', function banSuite() {
       const message = {
         data: {
           type: 'user',
-          id: 'v@example.com',
           attributes: {
             ban: true,
           },
@@ -268,7 +267,7 @@ describe('Unit Tests', function testSuite() {
       };
 
       it('reject to ban when user is not authenicated', function test(done) {
-        client.patch(`${PREFIX}/${FAMILY}/ban`, message, (err, req, res, body) => {
+        client.patch(`${PREFIX}/${FAMILY}/v@example.com/ban`, message, (err, req, res, body) => {
           try {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(401);
@@ -294,7 +293,7 @@ describe('Unit Tests', function testSuite() {
             },
           }));
 
-        client.patch(`${PREFIX}/${FAMILY}/ban?jwt=notadmin`, message, (err, req, res, body) => {
+        client.patch(`${PREFIX}/${FAMILY}/v@example.com/ban?jwt=notadmin`, message, (err, req, res, body) => {
           try {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(403);
@@ -319,10 +318,10 @@ describe('Unit Tests', function testSuite() {
               },
             },
           }))
-          .withArgs('users.ban', { type: 'email', username: message.data.id, ban: true, remoteip: '::ffff:127.0.0.1', whom: 'v@admin.com' }, { timeout: 5000 })
+          .withArgs('users.ban', { type: 'email', username: 'v@example.com', ban: true, remoteip: '::ffff:127.0.0.1', whom: 'v@admin.com' }, { timeout: 5000 })
           .returns(Promise.resolve(true));
 
-        client.patch(`${PREFIX}/${FAMILY}/ban?jwt=admin`, message, (err, req, res, body) => {
+        client.patch(`${PREFIX}/${FAMILY}/v@example.com/ban?jwt=admin`, message, (err, req, res, body) => {
           try {
             expect(err).to.be.eq(null);
             expect(res.statusCode).to.be.eq(204);

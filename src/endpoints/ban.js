@@ -3,13 +3,42 @@ const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
 const { getRoute, getTimeout, get: getConfig } = require('../config.js');
 
+/**
+ * @api {patch} /:id/ban Bans or unbans specified user
+ * @apiVersion 1.0.0
+ * @apiName BanUser
+ * @apiGroup Users
+ * @apiPermission admin
+ *
+ * @apiDescription Locks or unlocks account of the specified user based on the body payload
+ *
+ * @apiParam (Params) {String} id username we are trying to lock/unlock
+ *
+ * @apiParam (Body) {Object}        data                      container
+ * @apiParam (Body) {String="user"} data.type                 we are modifying this object type, must be 'user'
+ * @apiParam (Body) {Object}        data.attributes           container for attributes
+ * @apiParam (Body) {Boolean}       data.attributes.ban       when `true` - locks account, when `false` - unlocks it
+ * @apiParam (Body) {String{1..}}   [data.attributes.reason]  optional reason for this action
+ *
+ * @apiUse ValidationError
+ * @apiUse UnauthorizedError
+ * @apiUse ForbiddenResponse
+ * @apiUse UserNotFoundError
+ *
+ * @apiSuccessExample {json} Success-Response:
+ * 		HTTP/1.1 204 No Content
+ */
 exports.patch = {
-  path: '/ban',
+  path: '/:id/ban',
   middleware: [ 'auth' ],
   handlers: {
     '1.0.0': function requestBan(req, res, next) {
       if (!req.user.isAdmin()) {
         return next(new Errors.HttpStatusError(403, 'you are not authorized to perform this action'));
+      }
+
+      if (req.params.id === req.user.id) {
+        return next(new Errors.HttpStatusError(406, 'you can not (un)lock your own account'));
       }
 
       const { log, amqp } = req;
@@ -21,10 +50,10 @@ exports.patch = {
       return validator.filter(ROUTE_NAME, req.body)
         .then(function attemptToRegister(body) {
           const { data } = body;
-          const { id: username, attributes } = data;
+          const { attributes } = data;
           const message = {
             type: 'email',
-            username,
+            username: req.params.id,
             ban: attributes.ban,
             remoteip: proxyaddr(req, config.trustProxy),
             whom: req.user.id,

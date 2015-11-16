@@ -1,18 +1,18 @@
 /**
  * @apiDefine ValidationError
  *
- * @apiError (Error) {Object}    meta
- * @apiError (Error) {String}    meta.id
- * @apiError (Error) {Object[]}  errors
- * @apiError (Error) {String}    errors.status
- * @apiError (Error) {String}    errors.title
- * @apiError (Error) {String}    errors.code
- * @apiError (Error) {Object[]}  errors.detail
- * @apiError (Error) {String}    errors.detail.text
- * @apiError (Error) {String}    errors.detail.code
- * @apiError (Error) {String}    errors.detail.field
+ * @apiError (Code 400) {Object}    meta                  response meta information
+ * @apiError (Code 400) {String}    meta.id               request id
+ * @apiError (Code 400) {Object[]}  errors                array of errors
+ * @apiError (Code 400) {String}    errors.status         text code of error
+ * @apiError (Code 400) {String}    errors.title          short error description
+ * @apiError (Code 400) {String}    errors.code           code of error
+ * @apiError (Code 400) {Object[]}  errors.detail         embedded errors that happened
+ * @apiError (Code 400) {String}    errors.detail.text    short description of error
+ * @apiError (Code 400) {String}    errors.detail.code    error code
+ * @apiError (Code 400) {String}    errors.detail.field   input field, which was involved
  *
- * @apiErrorExample {json} Error-Response:
+ * @apiErrorExample {json} ValidationError:
  * 		HTTP/1.1 400 BadRequest
  * 		{
  * 			"meta": {
@@ -34,14 +34,14 @@
 /**
  * @apiDefine UnauthorizedError
  *
- * @apiError (Error) {Object}    meta
- * @apiError (Error) {String}    meta.id
- * @apiError (Error) {Object[]}  errors
- * @apiError (Error) {String}    errors.status
- * @apiError (Error) {String}    errors.title
- * @apiError (Error) {String}    errors.code
+ * @apiError (Code 401) {Object}    meta            response meta information
+ * @apiError (Code 401) {String}    meta.id         request id
+ * @apiError (Code 401) {Object[]}  errors          array of errors
+ * @apiError (Code 401) {String}    errors.status   text code of error
+ * @apiError (Code 401) {String}    errors.title    short error description
+ * @apiError (Code 401) {String}    errors.code     code of error
  *
- * @apiErrorExample {json} Error-Response:
+ * @apiErrorExample {json} UnauthorizedError:
  * 		HTTP/1.1 401 Unauthorized
  * 		{
  * 			"meta": {
@@ -56,19 +56,67 @@
  */
 
 /**
+ * @apiDefine ForbiddenResponse
+ *
+ * @apiError (Code 403) {Object}    meta           response meta information
+ * @apiError (Code 403) {String}    meta.id        request id
+ * @apiError (Code 403) {Object[]}  errors         array of errors
+ * @apiError (Code 403) {String}    errors.status  text code of error
+ * @apiError (Code 403) {String}    errors.title   short error description
+ * @apiError (Code 403) {String}    errors.code    code of error
+ *
+ * @apiErrorExample {json} ForbiddenResponse:
+ * 		HTTP/1.1 403 Forbidden
+ * 		{
+ * 			"meta": {
+ * 				"id": "request-id"
+ * 			},
+ * 			"errors": [{
+ * 				"status": "HttpStatusError",
+ * 				"code": 403,
+ * 				"title": "insufficient rights to perform this operation",
+ * 			}]
+ * 		}
+ */
+
+/**
+ * @apiDefine UserNotFoundError
+ *
+ * @apiError (Code 404) {Object}    meta           response meta information
+ * @apiError (Code 404) {String}    meta.id        request id
+ * @apiError (Code 404) {Object[]}  errors         array of errors
+ * @apiError (Code 404) {String}    errors.status  text code of error
+ * @apiError (Code 404) {String}    errors.title   short error description
+ * @apiError (Code 404) {String}    errors.code    code of error
+ *
+ * @apiErrorExample {json} UserNotFoundError:
+ * 		HTTP/1.1 404 NotFound
+ * 		{
+ * 			"meta": {
+ * 				"id": "request-id"
+ * 			},
+ * 			"errors": [{
+ * 				"status": "HttpStatusError",
+ * 				"code": 404,
+ * 				"title": "user test@example.com not found",
+ * 			}]
+ * 		}
+ */
+
+/**
  * @apiDefine UserAuthResponse
  *
- * @apiSuccess (200) {Object} meta              response meta information
- * @apiSuccess (200) {String} meta.id           request id
- * @apiSuccess (200) {String} meta.jwt          jsonwebtoken to be used for further authentication
- * @apiSuccess (200) {Object} data              response data
- * @apiSuccess (200) {String} data.type         response data type - always `user`
- * @apiSuccess (200) {String} data.id           username, always an email
- * @apiSuccess (200) {Object} data.attributes   user attributes
- * @apiSuccess (200) {Object} data.links        user links
- * @apiSuccess (200) {String} data.links.self   link to the user resource
+ * @apiSuccess (Code 200) {Object} meta              response meta information
+ * @apiSuccess (Code 200) {String} meta.id           request id
+ * @apiSuccess (Code 200) {String} meta.jwt          jsonwebtoken to be used for further authentication
+ * @apiSuccess (Code 200) {Object} data              response data
+ * @apiSuccess (Code 200) {String} data.type         response data type - always `user`
+ * @apiSuccess (Code 200) {String} data.id           username, always an email
+ * @apiSuccess (Code 200) {Object} data.attributes   user attributes
+ * @apiSuccess (Code 200) {Object} data.links        user links
+ * @apiSuccess (Code 200) {String} data.links.self   link to the user resource
  *
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccessExample {json} UserAuthResponse:
  * 		HTTP/1.1 200 OK
  * 		{
  * 			"meta": {
