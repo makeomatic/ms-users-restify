@@ -84,7 +84,7 @@
           "minItems": 1,
           "items": {
             "type": "string",
-            "minLength": 1
+            "enum": [ "companyName", "country", "city", "gender", "birthday", "phone" ]
           }
         }
       }

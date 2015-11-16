@@ -4,6 +4,84 @@ const { getAudience, getRoute, getTimeout } = require('../config.js');
 
 const ROUTE_NAME = 'updateMetadata';
 
+/**
+ * @api {patch} /:id Updates user's data
+ * @apiVersion 1.0.0
+ * @apiName UpdateMetadata
+ * @apiGroup Users
+ * @apiPermission user|admin
+ *
+ * @apiDescription Updates user's associated data, if user is an admin - he/she can change this data for any of the existing users. However, ordinary user can
+ * only change the data for her/himself. For that case :id param my equal `me`
+ *
+ * @apiHeader (Authorization) {String} Authorization JWT :accessToken
+ * @apiHeaderExample Authorization-Example:
+ * 		"Authorization: JWT myreallyniceandvalidjsonwebtoken"
+ *
+ * @apiParam (Params) {String} id username, for ordinary user must be `me`. Admin can use any applicable username here
+ *
+ * @apiParam (Body) {Object}            data                        data container
+ * @apiParam (Body) {String="user"}     data.type                   data type
+ * @apiParam (Body) {Object}            data.attributes             data attributes container
+ * @apiParam (Body) {String{1..150}}    data.attributes.firstName   user's first name
+ * @apiParam (Body) {String{1..150}}    data.attributes.lastName    user's surname
+ * @apiParam (Body) {String{1..150}}    data.attributes.companyName user's company name
+ * @apiParam (Body) {String{3}}         data.attributes.country     user's country in ISO3 format, ex: "USA"
+ * @apiParam (Body) {String="female", "male", "other"}    data.attributes.gender    user's gender
+ * @apiParam (Body) {String="YYYY.MM.DD"}                 data.attributes.birthday  user's birthday, eg. 1955.10.23
+ * @apiParam (Body) {String{6..20}}                       data.attributes.phone     user's phone number
+ * @apiParam (Body) {String[]="companyName", "country", "city", "gender", "birthday", "phone"} data.remove fields that should be removed from metadata
+ *
+ * @apiExample {curl} Example usage (admin):
+ *     curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
+ *       -H 'Accept-Encoding: gzip, deflate' \
+ *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       -H 'Authroziation: JWT nicerealtoken' \
+ *       "https://api-users.sandbox.matic.ninja/api/users/v%40example.com" \
+ *       -d '{
+ *         "data": {
+ *           "type": "user",
+ *           "attributes": {
+ *             "firstName": "Vitaly",
+ *             "lastName": "Nordstrom",
+ *             "companyName": "LasVatos, LLC",
+ *             "country": "USA",
+ *             "city": "Las Vegas",
+ *             "gender": "male",
+ *             "birthday": "1934.09.25"
+ *           },
+ *           "remove": [ "phone" ]
+ *         }
+ *       }'
+ *
+ * @apiExample {curl} Example usage (user):
+ *     curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
+ *       -H 'Accept-Encoding: gzip, deflate' \
+ *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       -H 'Authroziation: JWT nicerealtoken' \
+ *       "https://api-users.sandbox.matic.ninja/api/users/me" \
+ *       -d '{
+ *         "data": {
+ *           "type": "user",
+ *           "attributes": {
+ *             "companyName": "Greenvich",
+ *             "country": "RUS"
+ *           },
+ *           "remove": [ "phone", "birthday" ]
+ *         }
+ *       }'
+ *
+ * @apiUse UnauthorizedError
+ * @apiUse ForbiddenResponse
+ * @apiUse ValidationError
+ * @apiUse UserNotFoundError
+ * @apiUse PreconditionFailedError
+ * @apiUse LockedError
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 204 No Content
+ *
+ */
 exports.patch = {
   path: '/:id',
   middleware: [ 'auth' ],

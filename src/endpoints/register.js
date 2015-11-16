@@ -57,11 +57,36 @@ function transformBody(req, input) {
  * @apiParam (Body) {String{6..50}}                  data.attributes.passwordRepeat make sure that user typed in the same password
  * @apiParam (Body) {String{1..150}}                 data.attributes.firstName      user's given name
  * @apiParam (Body) {String{1..150}}                 data.attributes.lastName       user's surname
+ * @apiParam (Body) {String{1..150}}                 data.attributes.companyName    user's company name
  * @apiParam (Body) {String{3}}                      [data.attributes.country]      ISO3 country code, e.g "USA" or "RUS"
  * @apiParam (Body) {String{1..150}}                 [data.attributes.city]         free-form input city name
  * @apiParam (Body) {String="female","male","other"} [data.attributes.gender]       user's gender
  * @apiParam (Body) {String="YYYY.MM.DD"}            [data.attributes.birthday]     birthday in the format of YYYY.MM.DD
  * @apiParam (Body) {String{6..20}}                  [data.attributes.phone]        user's phone, no validation
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -i -X POST -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
+ *       -H 'Accept-Encoding: gzip, deflate' \
+ *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       "https://api-users.sandbox.matic.ninja/api/users" \
+ *       -d '{
+ *         "data": {
+ *           "type": "user",
+ *           "id": "v@example.com",
+ *           "attributes": {
+ *             "password": "somerealpassword",
+ *             "passwordRepeat": "somerealpassword",
+ *             "firstName": "Vitaly",
+ *             "lastName": "Nordstrom",
+ *             "companyName": "LasVatos, LLC",
+ *             "country": "USA",
+ *             "city": "Las Vegas",
+ *             "gender": "male",
+ *             "birthday": "1934.09.25",
+ *             "phone": "(440)0000000"
+ *           }
+ *         }
+ *       }'
  *
  * @apiUse ValidationError
  * @apiUse PreconditionFailedError

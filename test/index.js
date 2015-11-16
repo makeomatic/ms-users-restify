@@ -873,7 +873,7 @@ describe('Unit Tests', function testSuite() {
             $set: {
               lastName: 'Morris',
             },
-            $remove: [ 'vasya' ],
+            $remove: [ 'phone' ],
           }}, { timeout: 5000 })
           .returns(Promise.resolve(true));
 
@@ -883,7 +883,7 @@ describe('Unit Tests', function testSuite() {
             attributes: {
               lastName: 'Morris',
             },
-            remove: [ 'vasya' ],
+            remove: [ 'phone' ],
           },
         };
 
