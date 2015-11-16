@@ -129,6 +129,30 @@
  */
 
 /**
+ * @apiDefine LockedError
+ *
+ * @apiError (Code 423) {Object}    meta           response meta information
+ * @apiError (Code 423) {String}    meta.id        request id
+ * @apiError (Code 423) {Object[]}  errors         array of errors
+ * @apiError (Code 423) {String}    errors.status  text code of error
+ * @apiError (Code 423) {String}    errors.title   short error description
+ * @apiError (Code 423) {String}    errors.code    code of error
+ *
+ * @apiErrorExample {json} LockedError:
+ * 		HTTP/1.1 423 Locked
+ * 		{
+ * 			"meta": {
+ * 				"id": "request-id"
+ * 			},
+ * 			"errors": [{
+ * 				"status": "HttpStatusError",
+ * 				"code": 423,
+ * 				"title": "account has been locked",
+ * 			}]
+ * 		}
+ */
+
+/**
  * @apiDefine TooManyRequestsError
  *
  * @apiError (Code 429) {Object}    meta           response meta information
@@ -165,7 +189,7 @@
  * @apiSuccess (Code 200) {Object} data.links        user links
  * @apiSuccess (Code 200) {String} data.links.self   link to the user resource
  *
- * @apiSuccessExample {json} UserAuthResponse:
+ * @apiSuccessExample {json} Success-User:
  * 		HTTP/1.1 200 OK
  * 		{
  * 			"meta": {

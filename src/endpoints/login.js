@@ -5,6 +5,44 @@ const { getRoute, getTimeout, getAudience, get: getConfig } = require('../config
 
 const ROUTE_NAME = 'login';
 
+/**
+ * @api {post} /login Sign in
+ * @apiVersion 1.0.0
+ * @apiName Login
+ * @apiGroup Users
+ * @apiPermission none
+ *
+ * @apiDescription Authenticates user via it's username and password. Returns JWT token and associated user object on success.
+ *
+ * @apiParam (Body) {Object}        data                      data container
+ * @apiParam (Body) {String="user"} data.type                 data type
+ * @apiParam (Body) {String}        data.id                   username
+ * @apiParam (Body) {Object}        data.attributes           data attributes container
+ * @apiParam (Body) {String}        data.attributes.password  user password
+ *
+ * @apiExample {curl} Example usage:
+ *     curl -i -X POST -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
+ *       -H 'Accept-Encoding: gzip, deflate' \
+ *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       "https://api-users.sandbox.matic.ninja/api/users/login" \
+ *       -d '{
+ *         "data": {
+ *           "type": "user",
+ *           "id": "v@example.com",
+ *           "attributes": {
+ *             "password": "somerealpassword"
+ *           }
+ *         }
+ *       }'
+ *
+ * @apiUse ValidationError
+ * @apiUse ForbiddenResponse
+ * @apiUse UserNotFoundError
+ * @apiUse LockedError
+ * @apiUse TooManyRequestsError
+ *
+ * @apiUse UserAuthResponse
+ */
 exports.post = {
   path: '/login',
   handlers: {

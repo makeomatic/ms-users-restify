@@ -12,6 +12,10 @@ const { getRoute, getTimeout, get: getConfig } = require('../config.js');
  *
  * @apiDescription Locks or unlocks account of the specified user based on the body payload
  *
+ * @apiHeader (Authorization) {String} Authorization JWT :accessToken
+ * @apiHeaderExample Authorization-Example:
+ * 		"Authorization: JWT myreallyniceandvalidjsonwebtoken"
+ *
  * @apiParam (Params) {String} id username we are trying to lock/unlock
  *
  * @apiParam (Body) {Object}        data                      container
@@ -21,19 +25,19 @@ const { getRoute, getTimeout, get: getConfig } = require('../config.js');
  * @apiParam (Body) {String{1..}}   [data.attributes.reason]  optional reason for this action
  *
  * @apiExample {curl} Example usage:
- * 		curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
- * 		  -H 'Accept-Encoding: gzip, deflate' \
- * 		  -H 'Content-Type: applicaion/vnd.api+json' \
- * 		  "https://api-users.sandbox.matic.ninja/api/users/v%40example.com/ban" \
- * 		  -d '{
- * 		  	"data": {
- * 		  		"type": "user",
- * 		  		"attributes": {
- * 		  			"ban": true,
- * 		  			"reason": "fraudulent activity"
- * 		  		}
- * 		  	}
- * 		  }'
+ *     curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
+ *       -H 'Accept-Encoding: gzip, deflate' -H 'Authorization: JWT realjwttoken' \
+ *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       "https://api-users.sandbox.matic.ninja/api/users/v%40example.com/ban" \
+ *       -d '{
+ *         "data": {
+ *           "type": "user",
+ *           "attributes": {
+ *             "ban": true,
+ *             "reason": "fraudulent activity"
+ *           }
+ *         }
+ *       }'
  *
  * @apiUse ValidationError
  * @apiUse UnauthorizedError
@@ -41,7 +45,7 @@ const { getRoute, getTimeout, get: getConfig } = require('../config.js');
  * @apiUse UserNotFoundError
  *
  * @apiSuccessExample {json} Success-Response:
- * 		HTTP/1.1 204 No Content
+ *     HTTP/1.1 204 No Content
  */
 exports.patch = {
   path: '/:id/ban',

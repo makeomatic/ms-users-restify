@@ -3,7 +3,7 @@ const { getRoute, getTimeout } = require('../config.js');
 const ROUTE_NAME = 'challenge';
 
 /**
- * @api {post} /challenge Request validation challenge to be sent again
+ * @api {post} /challenge Request validation challenge
  * @apiVersion 1.0.0
  * @apiName RequestValidation
  * @apiGroup Users
