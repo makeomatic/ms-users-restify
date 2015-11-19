@@ -336,6 +336,133 @@ describe('Unit Tests', function testSuite() {
       });
     });
 
+    describe('GET /', function listSuite() {
+      const path = `${PREFIX}/${FAMILY}`;
+
+      it('rejects to return data when JWT token is invalid', function test(done) {
+        client.get(path, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(401);
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
+            expect(body.errors[0].title).to.be.eq('HttpStatusError: authorization required');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('rejects to return data when JWT token is valid, but user is not an admin', function test(done) {
+        this.amqp.publishAndWait
+          .withArgs('users.verify', { token: 'notadmin', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' })
+          .returns(Promise.resolve({
+            username: 'v@user.com',
+            metadata: {
+              '*.localhost': {
+                roles: [],
+                firstName: 'Vitaly',
+                lastName: 'Aminev',
+              },
+            },
+          }));
+
+        client.get(`${path}?jwt=notadmin`, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(403);
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
+            expect(body.errors[0].title).to.be.eq('HttpStatusError: you can only get information about yourself via /me endpoint');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('returns an error when payload is invalid', function test(done) {
+        this.amqp.publishAndWait
+          .withArgs('users.verify', { token: 'admin', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' })
+          .returns(Promise.resolve({
+            username: 'v@user.com',
+            metadata: {
+              '*.localhost': {
+                roles: [ 'admin' ],
+                firstName: 'Vitaly',
+                lastName: 'Aminev',
+              },
+            },
+          }));
+
+        client.get(`${path}?jwt=admin&filter={dastor:qutor}`, (err, req, res, body) => {
+          try {
+            expect(err).to.not.be.eq(null);
+            expect(res.statusCode).to.be.eq(400);
+            expect(body.errors[0].status).to.be.eq('ValidationError');
+            expect(body.errors[0].title).to.be.eq('query.filter and query.sortBy must be uri encoded, and query.filter must be a valid JSON object');
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+
+      it('returns list of users when payload is valid', function test(done) {
+        this.amqp.publishAndWait
+          .withArgs('users.verify', { token: 'admin', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' })
+          .returns(Promise.resolve({
+            username: 'v@user.com',
+            metadata: {
+              '*.localhost': {
+                roles: [ 'admin' ],
+                firstName: 'Vitaly',
+                lastName: 'Aminev',
+              },
+            },
+          }))
+          .withArgs('users.list', { limit: 50, criteria: 'firstName', order: 'DESC', filter: { '#': 'vitaly' }, audience: '*.localhost' }, { timeout: 5000 })
+          .returns(Promise.resolve({
+            page: 1,
+            pages: 2,
+            cursor: 50,
+            users: [{
+              id: 'vitaly@example.com',
+              metadata: {
+                '*.localhost': {
+                  firstName: 'vitaly',
+                  lastName: 'torby',
+                },
+              },
+            }],
+          }));
+
+        const qpath = `${path}?offset=0&limit=50&sortBy=firstName&order=desc&filter=${encodeURIComponent(JSON.stringify({'#': 'vitaly'}))}&jwt=admin`;
+        client.get(qpath, (err, req, res, body) => {
+          try {
+            expect(err).to.be.eq(null);
+            expect(res.statusCode).to.be.eq(200);
+            expect(body.meta.page).to.be.eq(1);
+            expect(body.meta.pages).to.be.eq(2);
+            expect(body.meta.cursor).to.be.eq(50);
+            expect(body.data[0].type).to.be.eq('user');
+            expect(body.data[0].id).to.be.eq('vitaly@example.com');
+            expect(body.data[0].attributes).to.be.deep.eq({
+              firstName: 'vitaly',
+              lastName: 'torby',
+            });
+            expect(this.amqp.publishAndWait.calledTwice).to.be.eq(true);
+          } catch (e) {
+            return done(e);
+          }
+
+          done();
+        });
+      });
+    });
+
     describe('GET /me', function meSuite() {
       it('rejects to return data when JWT token is invalid', function test(done) {
         client.get(`${PREFIX}/${FAMILY}/me`, (err, req, res, body) => {

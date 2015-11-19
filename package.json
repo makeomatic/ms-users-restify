@@ -26,6 +26,7 @@
     "countryjs": "^1.4.5",
     "debug": "^2.2.0",
     "glob": "^6.0.1",
+    "mm-lodash": "^1.2.5",
     "ms-amqp-validation": "^0.4.1",
     "ms-users-schemas": "^0.1.0",
     "proxy-addr": "^1.0.8"
