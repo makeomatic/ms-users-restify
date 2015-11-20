@@ -34,7 +34,7 @@ const defaultOpts = {
   queryTokenField: 'token',
 };
 
-let config = ld.merge({}, defaultOpts);
+const config = ld.merge({}, defaultOpts);
 
 /**
  * Returns configuration instance
@@ -49,7 +49,7 @@ exports.get = function get() {
  * @param  {Object} conf
  */
 exports.init = function init(conf = {}) {
-  config = ld.merge({}, defaultOpts, conf);
+  ld.merge(config, conf);
   config.trustProxy = typeof config.trustProxy === 'function' ? config.trustProxy : proxyaddr.compile(config.trustProxy);
 };
 
