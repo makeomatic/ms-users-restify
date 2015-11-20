@@ -35,7 +35,7 @@ const ROUTE_NAME = 'updateMetadata';
  * @apiExample {curl} Example usage (admin):
  *     curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
  *       -H 'Accept-Encoding: gzip, deflate' \
- *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       -H 'Content-Type: application/vnd.api+json' \
  *       -H 'Authroziation: JWT nicerealtoken' \
  *       "https://api-users.sandbox.matic.ninja/api/users/v%40example.com" \
  *       -d '{
@@ -57,7 +57,7 @@ const ROUTE_NAME = 'updateMetadata';
  * @apiExample {curl} Example usage (user):
  *     curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
  *       -H 'Accept-Encoding: gzip, deflate' \
- *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       -H 'Content-Type: application/vnd.api+json' \
  *       -H 'Authroziation: JWT nicerealtoken' \
  *       "https://api-users.sandbox.matic.ninja/api/users/me" \
  *       -d '{

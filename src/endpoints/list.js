@@ -28,7 +28,7 @@ ld.mixin(require('mm-lodash'));
  *
  * @apiExample {curl} Example usage:
  *     curl -i -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' -H 'Accept-Encoding: gzip, deflate' \
- *       -H 'Content-Type: applicaion/vnd.api+json' -H "Authorization: JWT realjwttoken" \
+ *       -H 'Content-Type: application/vnd.api+json' -H "Authorization: JWT realjwttoken" \
  *       "https://api-users.sandbox.matic.ninja/api/users"
  *
  * @apiUse UnauthorizedError

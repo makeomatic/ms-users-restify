@@ -21,7 +21,7 @@ const { getRoute, getTimeout, get: getConfig } = require('../config.js');
  * @apiExample {curl} Example usage:
  *     curl -i -X POST -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
  *       -H 'Accept-Encoding: gzip, deflate' \
- *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       -H 'Content-Type: application/vnd.api+json' \
  *       "https://api-users.sandbox.matic.ninja/api/users/reset" \
  *       -d '{
  *         "data": {
@@ -85,7 +85,7 @@ exports.post = {
  * @apiExample {curl} Example usage unauthorized:
  *     curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
  *       -H 'Accept-Encoding: gzip, deflate' \
- *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       -H 'Content-Type: application/vnd.api+json' \
  *       "https://api-users.sandbox.matic.ninja/api/users/reset" \
  *       -d '{
  *         "data": {
@@ -112,7 +112,7 @@ exports.post = {
  * @apiExample {curl} Example usage authorized:
  *     curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
  *       -H 'Accept-Encoding: gzip, deflate' \
- *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       -H 'Content-Type: application/vnd.api+json' \
  *       -H 'Authroziation: JWT myrealusertoken' \
  *       "https://api-users.sandbox.matic.ninja/api/users/reset" \
  *       -d '{

@@ -14,7 +14,7 @@
  * @apiExample {curl} Example usage:
  *     curl -i -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
  *       -H 'Accept-Encoding: gzip, deflate' \
- *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       -H 'Content-Type: application/vnd.api+json' \
  *       -H 'Authroziation: JWT myrealjwttoken' \
  *       "https://api-users.sandbox.matic.ninja/api/users/me" \
  *

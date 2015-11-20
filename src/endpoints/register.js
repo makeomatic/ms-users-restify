@@ -67,8 +67,8 @@ function transformBody(req, input) {
  * @apiExample {curl} Example usage:
  *     curl -i -X POST -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
  *       -H 'Accept-Encoding: gzip, deflate' \
- *       -H 'Content-Type: applicaion/vnd.api+json' \
- *       "https://api-users.sandbox.matic.ninja/api/users" \
+ *       -H 'Content-Type: application/vnd.api+json' \
+ *       "https://api-sandbox.cappasity.matic.ninja/api/users" \
  *       -d '{
  *         "data": {
  *           "type": "user",

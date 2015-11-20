@@ -23,7 +23,7 @@ const ROUTE_NAME = 'login';
  * @apiExample {curl} Example usage:
  *     curl -i -X POST -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
  *       -H 'Accept-Encoding: gzip, deflate' \
- *       -H 'Content-Type: applicaion/vnd.api+json' \
+ *       -H 'Content-Type: application/vnd.api+json' \
  *       "https://api-users.sandbox.matic.ninja/api/users/login" \
  *       -d '{
  *         "data": {
