@@ -3,7 +3,8 @@ const Errors = require('common-errors');
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
 const auth = Promise.promisify(require('../middleware/auth.js'));
-const { getRoute, getTimeout, get: getConfig } = require('../config.js');
+const config = require('../config.js');
+const { getRoute, getTimeout } = config;
 
 /**
  * @api {post} /reset Request to reset password
@@ -41,11 +42,7 @@ exports.post = {
   path: '/reset',
   handlers: {
     '1.0.0': function requestReset(req, res, next) {
-      const { log, amqp } = req;
-      const config = getConfig();
       const ROUTE_NAME = 'requestPassword';
-
-      log.debug('requesting to reset a password');
 
       return validator.filter(ROUTE_NAME, req.body)
         .then(function attemptToRegister(body) {
@@ -55,7 +52,7 @@ exports.post = {
             remoteip: proxyaddr(req, config.trustProxy),
           };
 
-          return amqp
+          return req.amqp
             .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
             .then(() => {
               res.send(202);
@@ -139,10 +136,7 @@ exports.patch = {
   path: '/reset',
   handlers: {
     '1.0.0': function validateReset(req, res, next) {
-      const config = getConfig();
       const ROUTE_NAME = 'updatePassword';
-
-      req.log.debug('requesting to restore a password');
 
       return validator.filter('resetPassword', req.body)
         .then(function attemptToRegister(body) {

@@ -1,7 +1,9 @@
 const Errors = require('common-errors');
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
-const { getRoute, getTimeout, get: getConfig } = require('../config.js');
+const config = require('../config.js');
+const ROUTE_NAME = 'ban';
+const { getRoute, getTimeout } = config;
 
 /**
  * @api {patch} /:id/ban Bans or unbans specified user
@@ -60,12 +62,6 @@ exports.patch = {
         return next(new Errors.HttpStatusError(406, 'you can not (un)lock your own account'));
       }
 
-      const { log, amqp } = req;
-      const config = getConfig();
-      const ROUTE_NAME = 'ban';
-
-      log.debug('requesting to (un)ban a user');
-
       return validator.filter(ROUTE_NAME, req.body)
         .then(function attemptToRegister(body) {
           const { data } = body;
@@ -82,7 +78,7 @@ exports.patch = {
             message.reason = attributes.reason;
           }
 
-          return amqp
+          return req.amqp
             .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
             .then(() => {
               res.send(204);

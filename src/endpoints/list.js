@@ -1,8 +1,8 @@
 const Promise = require('bluebird');
 const validator = require('../validator.js');
-const User = require('../models/User.js');
 const Errors = require('common-errors');
-const { getRoute, getAudience, getTimeout, get: getConfig } = require('../config.js');
+const config = require('../config.js');
+const { getRoute, getAudience, getTimeout } = config;
 const ld = require('lodash').runInContext();
 const { stringify: qs } = require('querystring');
 
@@ -117,7 +117,6 @@ exports.get = {
         ]);
       })
       .spread(function remapAnswer(answer, message) {
-        const config = getConfig();
         const { page, pages, cursor } = answer;
         const { order, filter, offset, limit, criteria: sortBy } = message;
         const selfQS = {
@@ -141,6 +140,7 @@ exports.get = {
           res.links.next = `${base}?${qs(nextQS)}`;
         }
 
+        const { User } = config.models;
         res.send(answer.users.map(function remapUser(user) {
           return User.transform({ username: user.id, metadata: user.metadata });
         }));

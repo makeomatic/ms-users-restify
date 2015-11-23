@@ -1,11 +1,10 @@
 const ld = require('lodash');
-const User = require('../models/User.js');
 const Errors = require('common-errors');
 const countryData = require('countryjs');
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
-const { getRoute, getTimeout, getAudience, get: getConfig } = require('../config.js');
-
+const config = require('../config.js');
+const { getRoute, getTimeout, getAudience } = config;
 const ROUTE_NAME = 'register';
 
 /**
@@ -36,7 +35,7 @@ function transformBody(req, input) {
     metadata: ld.pick(attributes, [ 'firstName', 'lastName', 'companyName', 'country', 'city', 'gender', 'birthday', 'phone' ]),
     activate: false,
     audience: getAudience(),
-    ipaddress: proxyaddr(req, getConfig().trustProxy),
+    ipaddress: proxyaddr(req, config.trustProxy),
   };
 }
 
@@ -100,17 +99,12 @@ exports.post = {
   path: '/',
   handlers: {
     '1.0.0': function registerUser(req, res, next) {
-      const { log, amqp } = req;
-      const config = getConfig();
-
-      log.debug('attempt to register user');
-
       return validator.filter('register', req.body)
         .then(function filteredBody(body) {
           return transformBody(req, body);
         })
         .then(function attemptToRegister(message) {
-          return amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
+          return req.amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
             .then(reply => {
               if (reply.requiresActivation) {
                 return res.send(202);
@@ -121,7 +115,7 @@ exports.post = {
                 self: config.host + req.path(),
               };
 
-              res.send(201, User.transform(reply.user, true));
+              res.send(201, config.models.User.transform(reply.user, true));
             });
         })
         .asCallback(next);

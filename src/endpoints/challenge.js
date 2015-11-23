@@ -37,10 +37,6 @@ exports.post = {
   path: '/challenge',
   handlers: {
     '1.0.0': function requestChallenge(req, res, next) {
-      const { log, amqp } = req;
-
-      log.debug('requesting to get a challenge');
-
       return validator
         .filter('challenge', req.body)
         .then(function attemptToRegister(body) {
@@ -49,7 +45,7 @@ exports.post = {
             username: body.data.id,
           };
 
-          return amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
+          return req.amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
             .then(() => {
               res.send(202);
             });

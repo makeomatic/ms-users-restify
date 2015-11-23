@@ -1,6 +1,6 @@
 const Errors = require('common-errors');
-const User = require('../models/User.js');
-const { getRoute, getTimeout, getAudience, get: getConfig } = require('../config.js');
+const config = require('../config.js');
+const { getAudience, getRoute, getTimeout } = config;
 const ROUTE_NAME = 'activate';
 
 /**
@@ -26,8 +26,8 @@ exports.post = {
   path: '/activate',
   handlers: {
     '1.0.0': function requestActivate(req, res, next) {
-      const config = getConfig();
       const token = req.query[config.queryTokenField];
+      const { User } = config.models;
 
       if (!token) {
         return next(new Errors.ValidationError('validation token must be present in query.token', 400, 'query.token'));

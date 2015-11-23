@@ -19,7 +19,7 @@ const client = restify.createJsonClient({
 client.headers.accept = 'application/vnd.api+json';
 
 describe('Unit Tests', function testSuite() {
-  const UsersRestify = require('../src');
+  const usersRestify = require('../src');
 
   beforeEach(function start(done) {
     this.amqp = {
@@ -52,13 +52,13 @@ describe('Unit Tests', function testSuite() {
   });
 
   it('should attach routes', function test() {
-    UsersRestify.attach(this.server);
+    usersRestify(this.server, FAMILY);
     expect(Object.keys(this.server.router.reverse)).to.have.length.gt(0);
   });
 
   describe('test routes', function testRoutesSuite() {
     beforeEach(function attachRoutes() {
-      UsersRestify.attach(this.server, FAMILY, PREFIX);
+      usersRestify(this.server, FAMILY, PREFIX);
     });
 
     describe('POST / [register]', function registerUserTests() {
@@ -77,7 +77,7 @@ describe('Unit Tests', function testSuite() {
             expect(body.errors[0].title).to.be.eq('route "register" validation failed');
             expect(body.errors[0]).to.have.ownProperty('detail');
           } catch (e) {
-            return done(e);
+            return done(err || e);
           }
           done();
         });
@@ -114,7 +114,7 @@ describe('Unit Tests', function testSuite() {
               ipaddress: '::ffff:127.0.0.1',
             }, { timeout: 5000 })).to.be.eq(true);
           } catch (e) {
-            return done(e);
+            return done(err || e);
           }
           done();
         });
@@ -132,7 +132,7 @@ describe('Unit Tests', function testSuite() {
             expect(body.errors[0].title).to.be.eq('validation token must be present in query.token');
             expect(body.errors[0].code).to.be.eq(400);
           } catch (e) {
-            return done(e);
+            return done(err || e);
           }
 
           done();
@@ -165,7 +165,7 @@ describe('Unit Tests', function testSuite() {
         });
       });
 
-      it('returns user on successful actiaftion', function test(done) {
+      it('returns user on successful activation', function test(done) {
         this.amqp.publishAndWait.returns(Promise.resolve({
           jwt: 'nicetoken',
           user: {
@@ -205,7 +205,7 @@ describe('Unit Tests', function testSuite() {
               namespace: 'activate',
             }, { timeout: 5000 })).to.be.eq(true);
           } catch (e) {
-            return done(e);
+            return done(err || e);
           }
 
           done();

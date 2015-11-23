@@ -1,8 +1,7 @@
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
-const User = require('../models/User.js');
-const { getRoute, getTimeout, getAudience, get: getConfig } = require('../config.js');
-
+const config = require('../config.js');
+const { getRoute, getTimeout, getAudience } = config;
 const ROUTE_NAME = 'login';
 
 /**
@@ -47,10 +46,6 @@ exports.post = {
   path: '/login',
   handlers: {
     '1.0.0': function login(req, res, next) {
-      const config = getConfig();
-
-      req.log.debug('attempting to login');
-
       return validator.validate(ROUTE_NAME, req.body)
         .then(function requestAuth(body) {
           const message = {
@@ -68,7 +63,7 @@ exports.post = {
             self: config.host + req.path(),
           };
 
-          res.send(User.transform(reply.user, true));
+          res.send(config.models.User.transform(reply.user, true));
         })
         .asCallback(next);
     },

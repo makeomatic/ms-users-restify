@@ -1,56 +1,20 @@
-const ld = require('lodash');
-const data = require('./adapter.js');
-const debug = require('debug')('ms-users-restify:attach');
+const path = require('path');
+const config = require('./config.js');
+const utils = require('restify-utils');
 
 /**
- * Raw file references
- * @type {Object}
+ * Exports .attach function as main one
+ * Exports .endpoints object
+ * Exports .middleware object
  */
-exports.files = data.files;
-
-/**
- * Raw middleware references
- * @type {Object}
- */
-exports.middleware = data.middleware;
+module.exports = exports = utils.attach(
+  config,
+  path.resolve(__dirname, './endpoints'),
+  path.resolve(__dirname, './middleware')
+);
 
 /**
  * Use this function to configure routes
  * @return {Function}
  */
-exports.config = require('./config.js').init;
-
-/**
- * Accepts restify server instance and attaches handlers
- * @param  {RestifyServer} server
- * @param  {String}        family
- */
-exports.attach = function attach(server, family = 'users', prefix = '/api') {
-  exports.config({ attachPoint: `${prefix}/${family}`, family });
-
-  debug('attaching with family %s and prefix %s', family, prefix);
-  ld.forOwn(data.files, function attachRoute(file, name) {
-    debug('attaching file %s', name);
-    ld.forOwn(file, function iterateOverProperties(props, method) {
-      debug('  attaching method %s and path %s', method, props.path);
-      ld.forOwn(props.handlers, function iterateOverVersionedHandler(handler, versionString) {
-        debug('    attaching handler for version %s', versionString);
-        const args = [
-          {
-            name: `${family}.${name}.${method}`,
-            path: `${prefix}/${family + props.path}`,
-            version: versionString.split(','),
-          },
-        ];
-        if (props.middleware) {
-          props.middleware.forEach(function attachMiddleware(middlewareName) {
-            debug('      pushed middleware %s', middlewareName);
-            args.push(data.middleware[middlewareName]);
-          });
-        }
-        args.push(handler);
-        server[method].apply(server, args);
-      });
-    });
-  });
-};
+exports.reconfigure = config.reconfigure;
