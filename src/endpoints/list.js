@@ -111,10 +111,10 @@ exports.get = {
         return validator.validate(ROUTE_NAME, message);
       })
       .then(function askAMQP(message) {
-        return Promise.all([
+        return Promise.join(
           req.amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) }),
-          message,
-        ]);
+          message
+        );
       })
       .spread(function remapAnswer(answer, message) {
         const { page, pages, cursor } = answer;
