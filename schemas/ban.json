@@ -1,12 +1,5 @@
 {
-  "definitions": {
-    "username": {
-      "type": "string",
-      "minLength": 6,
-      "maxLength": 50,
-      "format": "email"
-    }
-  },
+  "id": "ban",
   "type": "object",
   "additionalProperties": false,
   "required": [ "data" ],

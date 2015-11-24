@@ -129,7 +129,7 @@ exports.get = {
 
         res.meta = { page, pages };
 
-        const base = config.host + config.attachPoint;
+        const base = config.host + config.users.attachPoint;
         res.links = {
           self: `${base}?${qs(selfQS)}`,
         };

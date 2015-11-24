@@ -1,17 +1,5 @@
 {
-  "definitions": {
-    "username": {
-      "type": "string",
-      "minLength": 6,
-      "maxLength": 50,
-      "format": "email"
-    },
-    "password": {
-      "type": "string",
-      "minLength": 6,
-      "maxLength": 50
-    }
-  },
+  "id": "login",
   "type": "object",
   "additionalProperties": false,
   "required": [ "data" ],
@@ -26,7 +14,7 @@
           "enum": [ "user" ]
         },
         "id": {
-          "$ref": "#/definitions/username"
+          "$ref": "users-common#/definitions/username"
         },
         "attributes": {
           "type": "object",
@@ -34,7 +22,7 @@
           "required": [ "password" ],
           "properties": {
             "password": {
-              "$ref": "#/definitions/password"
+              "$ref": "users-common#/definitions/password"
             }
           }
         }

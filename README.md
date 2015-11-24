@@ -6,6 +6,8 @@
 
 ## Usage
 
+Family must be set to `users`, this is a limitation of this module for now
+
 ```js
 // server - restify server instance
 

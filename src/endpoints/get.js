@@ -62,7 +62,7 @@ exports.get = {
   handlers: {
     '1.0.0': function me(req, res, next) {
       if (req.params.id === 'me') {
-        return next(`${config.family}.me.get`);
+        return next(`users.me.get`);
       }
 
       if (!req.user.isAdmin()) {

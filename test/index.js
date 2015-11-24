@@ -74,7 +74,7 @@ describe('Unit Tests', function testSuite() {
             expect(body.errors[0].status).to.be.eq('ValidationError');
             expect(body.errors[0].code).to.be.eq(400);
             expect(body.errors[0].code).to.be.eq(400);
-            expect(body.errors[0].title).to.be.eq('route "register" validation failed');
+            expect(body.errors[0].title).to.be.eq('register validation failed: data should have required property \'data\'');
             expect(body.errors[0]).to.have.ownProperty('detail');
           } catch (e) {
             return done(err || e);
@@ -221,7 +221,7 @@ describe('Unit Tests', function testSuite() {
             expect(res.statusCode).to.be.eq(400);
             expect(body).to.have.ownProperty('errors');
             expect(body.errors[0].status).to.be.eq('ValidationError');
-            expect(body.errors[0].title).to.be.eq('route "challenge" validation failed');
+            expect(body.errors[0].title).to.be.eq('challenge validation failed: data should have required property \'data\'');
             expect(body.errors[0]).to.have.ownProperty('detail');
           } catch (e) {
             return done(e);
@@ -481,7 +481,7 @@ describe('Unit Tests', function testSuite() {
 
       it('returns user data when JWT token is valid', function test(done) {
         this.amqp.publishAndWait
-          .withArgs('users.verify', { token: 'validtoken', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' })
+          .withArgs('users.verify', { token: 'validtoken', audience: '*.localhost', remoteip: '::ffff:127.0.0.1' }, { timeout: 2000 })
           .returns(Promise.resolve({
             username: 'v@user.com',
             metadata: {
@@ -506,7 +506,7 @@ describe('Unit Tests', function testSuite() {
             });
             expect(this.amqp.publishAndWait.calledOnce).to.be.eq(true);
           } catch (e) {
-            return done(e);
+            return done(err || e);
           }
 
           done();

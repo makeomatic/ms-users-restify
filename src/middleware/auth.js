@@ -7,7 +7,7 @@ const { getRoute, getTimeout, getAudience } = config;
 const isArray = Array.isArray;
 const ROUTE_NAME = 'verify';
 
-module.exports = function registerUser(req, res, next) {
+module.exports = function authenticateUser(req, res, next) {
   const { amqp, headers, query } = req;
   const { authorization } = headers;
   let jwt;
@@ -35,8 +35,8 @@ module.exports = function registerUser(req, res, next) {
   return amqp
     .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
     .then(reply => {
-      req.user = config.models.User.deserialize(reply);
-      req.log = req.log.child({ user: req.user.id });
+      const user = req.user = config.models.User.deserialize(reply);
+      req.log = req.log.child({ user: user.id });
     })
     .asCallback(next);
 };
