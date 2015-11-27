@@ -39,6 +39,7 @@ const config = {
   trustProxy: 'loopback',
   host: 'http://localhost:8080',
   queryTokenField: 'token',
+  usersRequireActivate: true,
 };
 
 /**

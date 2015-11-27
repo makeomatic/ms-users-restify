@@ -33,7 +33,7 @@ function transformBody(req, input) {
     username: body.id,
     password,
     metadata: ld.pick(attributes, [ 'firstName', 'lastName', 'companyName', 'country', 'city', 'gender', 'birthday', 'phone' ]),
-    activate: false,
+    activate: config.usersRequireActivate !== true,
     audience: getAudience(),
     ipaddress: proxyaddr(req, config.trustProxy),
   };
