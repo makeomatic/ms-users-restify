@@ -34,8 +34,9 @@ module.exports = function authenticateUser(req, res, next) {
 
   return amqp
     .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
-    .then(reply => {
+    .then(function attachUserObject(reply) {
       const user = req.user = config.models.User.deserialize(reply);
+      req.user.jwt = jwt;
       req.log = req.log.child({ user: user.id });
     })
     .asCallback(next);
