@@ -30,7 +30,7 @@ exports.post = {
       const { User } = config.models;
 
       if (!token) {
-        return next(new Errors.ValidationError('validation token must be present in query.token', 400, 'query.token'));
+        return next(new Errors.ValidationError(`validation token must be present in query.${config.queryTokenField}`, 400, `query.${config.queryTokenField}`));
       }
 
       req.log.debug('attempting to activate user with token %s', token);

@@ -50,6 +50,7 @@ exports.post = {
             type: 'email',
             username: body.data.id,
             remoteip: proxyaddr(req, config.trustProxy),
+            generateNewPassword: config.generateNewPassword,
           };
 
           return req.amqp
