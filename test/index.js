@@ -33,7 +33,7 @@ describe('Unit Tests', function testSuite() {
         stream: process.stdout,
       }),
     });
-    this.server.use(restify.acceptParser([ 'application/vnd.api+json', 'application/octet-stream' ]));
+    this.server.use(restify.acceptParser(['application/vnd.api+json', 'application/octet-stream']));
     this.server.use(restify.queryParser({ mapParams: false }));
     this.server.use(restify.gzipResponse());
     this.server.use(restify.conditionalRequest());
@@ -314,7 +314,7 @@ describe('Unit Tests', function testSuite() {
             username: 'v@admin.com',
             metadata: {
               '*.localhost': {
-                roles: [ 'admin' ],
+                roles: ['admin'],
               },
             },
           }))
@@ -389,7 +389,7 @@ describe('Unit Tests', function testSuite() {
             username: 'v@user.com',
             metadata: {
               '*.localhost': {
-                roles: [ 'admin' ],
+                roles: ['admin'],
                 firstName: 'Vitaly',
                 lastName: 'Aminev',
               },
@@ -417,7 +417,7 @@ describe('Unit Tests', function testSuite() {
             username: 'v@user.com',
             metadata: {
               '*.localhost': {
-                roles: [ 'admin' ],
+                roles: ['admin'],
                 firstName: 'Vitaly',
                 lastName: 'Aminev',
               },
@@ -439,7 +439,7 @@ describe('Unit Tests', function testSuite() {
             }],
           }));
 
-        const qpath = `${path}?offset=0&limit=50&sortBy=firstName&order=desc&filter=${encodeURIComponent(JSON.stringify({'#': 'vitaly'}))}&jwt=admin`;
+        const qpath = `${path}?offset=0&limit=50&sortBy=firstName&order=desc&filter=${encodeURIComponent(JSON.stringify({ '#': 'vitaly' }))}&jwt=admin`;
         client.get(qpath, (err, req, res, body) => {
           try {
             expect(err).to.be.eq(null);
@@ -567,7 +567,7 @@ describe('Unit Tests', function testSuite() {
             username: 'v@user.com',
             metadata: {
               '*.localhost': {
-                roles: [ 'admin' ],
+                roles: ['admin'],
                 firstName: 'Vitaly',
                 lastName: 'Aminev',
               },
@@ -707,7 +707,7 @@ describe('Unit Tests', function testSuite() {
 
         it('responses with 202 when payload is valid', function test(done) {
           this.amqp.publishAndWait
-            .withArgs('users.requestPassword', { type: 'email', username: 'v@example.com', remoteip: '::ffff:127.0.0.1' })
+            .withArgs('users.requestPassword', { type: 'email', username: 'v@example.com', remoteip: '::ffff:127.0.0.1', generateNewPassword: false })
             .returns(Promise.resolve(true));
 
           const msg = {
@@ -991,7 +991,7 @@ describe('Unit Tests', function testSuite() {
             username: 'nice@example.com',
             metadata: {
               '*.localhost': {
-                roles: [ 'admin' ],
+                roles: ['admin'],
                 firstName: 'Nice',
               },
             },
@@ -1000,8 +1000,8 @@ describe('Unit Tests', function testSuite() {
             $set: {
               lastName: 'Morris',
             },
-            $remove: [ 'phone' ],
-          }}, { timeout: 5000 })
+            $remove: ['phone'],
+          } }, { timeout: 5000 })
           .returns(Promise.resolve(true));
 
         const msg = {
@@ -1010,7 +1010,7 @@ describe('Unit Tests', function testSuite() {
             attributes: {
               lastName: 'Morris',
             },
-            remove: [ 'phone' ],
+            remove: ['phone'],
           },
         };
 
