@@ -1,6 +1,6 @@
 {
   "name": "ms-users-restify",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Core of the microservice for handling users",
   "main": "./lib/index.js",
   "scripts": {
@@ -29,8 +29,8 @@
     "proxy-addr": "^1.0.10"
   },
   "peerDependencies": {
-    "ms-validation": "^0.5.7",
-    "restify-utils": "^0.3.5"
+    "ms-validation": "^0.x.x",
+    "restify-utils": "^0.x.x"
   },
   "devDependencies": {
     "babel-cli": "^6.3.17",
