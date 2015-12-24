@@ -1,5 +1,6 @@
 const ld = require('lodash');
 const proxyaddr = require('proxy-addr');
+const BLACK_LIST = ['reconfigure', 'getTimeout', 'getRoute', 'getAudience'];
 
 /**
  * Default configuration object
@@ -56,7 +57,7 @@ module.exports = exports = config;
  * @param  {Object} conf
  */
 exports.reconfigure = function init(conf = {}) {
-  ld.merge(config, conf);
+  ld.merge(config, ld.omit(conf, BLACK_LIST));
   config.trustProxy = typeof config.trustProxy === 'function' ? config.trustProxy : proxyaddr.compile(config.trustProxy);
 };
 
@@ -67,7 +68,7 @@ exports.reconfigure = function init(conf = {}) {
  */
 exports.getRoute = function getRoute(name) {
   const { users } = config;
-  return [ users.prefix, users.postfix[name]].join('.');
+  return [users.prefix, users.postfix[name]].join('.');
 };
 
 /**
@@ -76,7 +77,7 @@ exports.getRoute = function getRoute(name) {
  * @return {Number}
  */
 exports.getTimeout = function getTimeout(name) {
-  return config.users.timeouts[name];
+  return config.users.timeouts[name] || 5000;
 };
 
 /**
