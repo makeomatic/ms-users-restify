@@ -1,7 +1,10 @@
 const Errors = require('common-errors');
 const validator = require('../validator.js');
-const { getAudience, getRoute, getTimeout } = require('../config.js');
+const ld = require('lodash');
+const moment = require('moment');
 
+const config = require('../config.js');
+const { getAudience, getRoute, getTimeout } = config;
 const ROUTE_NAME = 'updateMetadata';
 
 /**
@@ -48,9 +51,14 @@ const ROUTE_NAME = 'updateMetadata';
  *             "country": "USA",
  *             "city": "Las Vegas",
  *             "gender": "male",
- *             "birthday": "1934.09.25"
+ *             "birthday": "1934.09.25",
+ *             "modelPrice": 120.5,
+ *             "plan": "special-super-plan"
  *           },
- *           "remove": [ "phone" ]
+ *           "remove": [ "phone" ],
+ *           "incr": {
+ *           		"models": 10
+ *           }
  *         }
  *       }'
  *
@@ -84,7 +92,7 @@ const ROUTE_NAME = 'updateMetadata';
  */
 exports.patch = {
   path: '/:id',
-  middleware: [ 'auth' ],
+  middleware: ['auth'],
   handlers: {
     '1.0.0': function updateUser(req, res, next) {
       const { amqp, log } = req;
@@ -94,8 +102,10 @@ exports.patch = {
           const { data } = body;
           const inputId = req.params.id;
           const id = inputId === 'me' ? req.user.id : inputId;
+          const isAdmin = req.user.isAdmin();
+          const { attributes, remove, incr } = data;
 
-          if (inputId !== 'me' && !req.user.isAdmin()) {
+          if (!isAdmin && (inputId !== 'me' || incr || (attributes && attributes.plan))) {
             throw new Errors.HttpStatusError(403, 'insufficient right to perform this operation');
           }
 
@@ -105,8 +115,6 @@ exports.patch = {
             metadata: {},
           };
 
-          const { attributes, remove } = data;
-
           if (attributes) {
             message.metadata.$set = attributes;
           }
@@ -115,12 +123,33 @@ exports.patch = {
             message.metadata.$remove = remove;
           }
 
-          return amqp
-            .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
-            .then(reply => {
-              log.debug('updateMetadata response:', reply);
-              res.send(204);
+          if (incr) {
+            message.metadata.$incr = incr;
+          }
+
+          let promise = Promise.bind(this);
+          if (attributes && attributes.plan) {
+            const { plan: planName } = attributes;
+            const [rootName, subName] = planName.split('.');
+            promise = promise.then(() => {
+              return amqp
+                .publishAndWait(config.payments.planGet, planName)
+                .then(planData => {
+                  const subs = ld.findWhere(planData.subs, { name: subName || rootName });
+                  attributes.nextCycle = moment().add(1, subName ? subName.slice(-2) : 'month').format();
+                  attributes.modelPrice = subs.price;
+                });
             });
+          }
+
+          return promise.then(() => {
+            return amqp
+              .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
+              .then(reply => {
+                log.debug('updateMetadata response:', reply);
+                res.send(204);
+              });
+          });
         })
         .asCallback(next);
     },

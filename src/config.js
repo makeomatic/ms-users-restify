@@ -39,6 +39,9 @@ const config = {
     },
     audience: '*.localhost',
   },
+  payments: {
+    planGet: 'payments.plan.get',
+  },
   trustProxy: 'loopback',
   host: 'http://localhost:8080',
   queryTokenField: 'token',

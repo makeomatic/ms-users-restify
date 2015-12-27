@@ -13,6 +13,9 @@
         },
         {
           "required": [ "type", "remove" ]
+        },
+        {
+          "required": [ "type", "incr" ]
         }
       ],
       "properties": {
@@ -48,6 +51,14 @@
             },
             "phone": {
               "$ref": "users-common#/definitions/phone"
+            },
+            "plan": {
+              "$ref": "users-common#/definitions/str-50"
+            },
+            "modelPrice": {
+              "type": "float",
+              "minimum": 0,
+              "maximum": 10000
             }
           }
         },
@@ -57,6 +68,16 @@
           "items": {
             "type": "string",
             "enum": [ "companyName", "country", "city", "gender", "birthday", "phone" ]
+          }
+        },
+        "incr": {
+          "additionalProperties": false,
+          "minProperties": 1,
+          "type": "object",
+          "properties": {
+            "models": {
+              "type": "integer"
+            }
           }
         }
       }
