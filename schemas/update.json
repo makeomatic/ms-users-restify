@@ -56,7 +56,7 @@
               "$ref": "users-common#/definitions/str-50"
             },
             "modelPrice": {
-              "type": "float",
+              "type": "double",
               "minimum": 0,
               "maximum": 10000
             }
