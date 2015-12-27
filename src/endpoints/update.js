@@ -1,7 +1,5 @@
 const Errors = require('common-errors');
 const validator = require('../validator.js');
-const ld = require('lodash');
-const moment = require('moment');
 
 const config = require('../config.js');
 const { getAudience, getRoute, getTimeout } = config;
@@ -30,6 +28,7 @@ const ROUTE_NAME = 'updateMetadata';
  * @apiParam (Body) {String{1..150}}    data.attributes.lastName    user's surname
  * @apiParam (Body) {String{1..150}}    data.attributes.companyName user's company name
  * @apiParam (Body) {String{3}}         data.attributes.country     user's country in ISO3 format, ex: "USA"
+ * @apiParam (Body) {String}            data.attributes.plan        when plan is changed by these means, it only reflects a new name, nothing else is changed
  * @apiParam (Body) {String="female", "male", "other"}    data.attributes.gender    user's gender
  * @apiParam (Body) {String="YYYY.MM.DD"}                 data.attributes.birthday  user's birthday, eg. 1955.10.23
  * @apiParam (Body) {String{6..20}}                       data.attributes.phone     user's phone number
@@ -127,29 +126,12 @@ exports.patch = {
             message.metadata.$incr = incr;
           }
 
-          let promise = Promise.bind(this);
-          if (attributes && attributes.plan) {
-            const { plan: planName } = attributes;
-            const [rootName, subName] = planName.split('.');
-            promise = promise.then(() => {
-              return amqp
-                .publishAndWait(config.payments.planGet, rootName)
-                .then(planData => {
-                  const subs = ld.findWhere(planData.subs, { name: subName || rootName });
-                  attributes.nextCycle = moment().add(1, subName ? subName.slice(-2) : 'month').format();
-                  attributes.modelPrice = subs.price;
-                });
+          return amqp
+            .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
+            .then(reply => {
+              log.debug('updateMetadata response:', reply);
+              res.send(204);
             });
-          }
-
-          return promise.then(() => {
-            return amqp
-              .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
-              .then(reply => {
-                log.debug('updateMetadata response:', reply);
-                res.send(204);
-              });
-          });
         })
         .asCallback(next);
     },
