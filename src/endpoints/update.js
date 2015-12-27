@@ -133,7 +133,7 @@ exports.patch = {
             const [rootName, subName] = planName.split('.');
             promise = promise.then(() => {
               return amqp
-                .publishAndWait(config.payments.planGet, planName)
+                .publishAndWait(config.payments.planGet, rootName)
                 .then(planData => {
                   const subs = ld.findWhere(planData.subs, { name: subName || rootName });
                   attributes.nextCycle = moment().add(1, subName ? subName.slice(-2) : 'month').format();
