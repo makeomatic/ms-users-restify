@@ -22,6 +22,8 @@ module.exports = function authenticateUser(req, res, next) {
     jwt = query.jwt;
   } else if (query.state) {
     jwt = query.state;
+  } else if (req.cookies && req.cookies.jwt) {
+    jwt = req.cookies.jwt;
   } else {
     return next(new Errors.HttpStatusError(401, 'authorization required'));
   }
