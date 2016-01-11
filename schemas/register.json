@@ -11,7 +11,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": [ "user" ]
+          "constant": "user"
         },
         "id": {
           "$ref": "users-common#/definitions/username"

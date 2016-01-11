@@ -99,7 +99,8 @@ exports.post = {
   path: '/',
   handlers: {
     '1.0.0': function registerUser(req, res, next) {
-      return validator.filter('register', req.body)
+      return validator
+        .filter('register', req.body)
         .then(function filteredBody(body) {
           return transformBody(req, body);
         })
