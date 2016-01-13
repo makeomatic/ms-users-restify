@@ -10,12 +10,14 @@ const ROUTE_NAME = 'activate';
  * @apiGroup Users
  * @apiPermission none
  *
- * @apiDescription Attempts to activate the user, and, if successful, returns authentication token and activated user info
+ * @apiDescription Attempts to activate the user, and, if successful,
+ * returns authentication token and activated user info
  *
  * @apiParam (Query) {String} token Token from the user's email
  *
  * @apiExample {curl} Example usage:
- *   curl -i -X POST -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' -H 'Accept-Encoding: gzip, deflate' \
+ *   curl -i -X POST -H 'Accept-Version: *' \
+ *     -H 'Accept: application/vnd.api+json' \
  *     "https://api-users.sandbox.matic.ninja/api/users/activate?token=xxx"
  *
  * @apiUse UserAuthResponse
@@ -30,10 +32,8 @@ exports.post = {
       const { User } = config.models;
 
       if (!token) {
-        return next(new Errors.ValidationError(`validation token must be present in query.${config.queryTokenField}`, 400, `query.${config.queryTokenField}`));
+        return next(new Errors.HttpStatusError(400, `validation token must be present in query.${config.queryTokenField}`));
       }
-
-      req.log.debug('attempting to activate user with token %s', token);
 
       const message = {
         token,
@@ -41,7 +41,8 @@ exports.post = {
         namespace: 'activate',
       };
 
-      return req.amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
+      return req.amqp
+        .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
         .then(reply => {
           res.meta = { jwt: reply.jwt };
           res.links = {

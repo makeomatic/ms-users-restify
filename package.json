@@ -1,12 +1,12 @@
 {
   "name": "ms-users-restify",
-  "version": "0.6.10",
+  "version": "0.7.0",
   "description": "Core of the microservice for handling users",
   "main": "./lib/index.js",
   "scripts": {
-    "compile": "if [[ $NODE_ENV != \"production\" ]]; then ./node_modules/.bin/babel -d ./lib ./src; fi",
+    "compile": "./node_modules/.bin/babel -d ./lib ./src",
     "prepublish": "npm run compile",
-    "test": "./node_modules/.bin/mocha --require babel-register --bail -R spec",
+    "test": "./node_modules/.bin/mocha",
     "doc": "apidoc -i ./src -o ./docs"
   },
   "repository": {
@@ -29,7 +29,7 @@
     "proxy-addr": "^1.0.10"
   },
   "peerDependencies": {
-    "ms-validation": "^0.x.x",
+    "ms-validation": "^1.x.x",
     "restify-utils": "^0.x.x"
   },
   "devDependencies": {
@@ -44,8 +44,10 @@
     "eslint-config-airbnb": "^3.1.0",
     "eslint-plugin-mocha": "^1.0.0",
     "mocha": "^2.3.4",
+    "ms-validation": "^1.0.1",
     "restify": "^4.0.3",
-    "restify-formatter-jsonapi": "^0.1.9",
+    "restify-formatter-jsonapi": "^0.2.1",
+    "restify-utils": "^0.4.0",
     "server-destroy": "^1.0.1",
     "sinon": "^1.17.2"
   },

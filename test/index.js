@@ -74,7 +74,7 @@ describe('Unit Tests', function testSuite() {
             expect(body.errors[0].status).to.be.eq('ValidationError');
             expect(body.errors[0].code).to.be.eq(400);
             expect(body.errors[0].code).to.be.eq(400);
-            expect(body.errors[0].title).to.be.eq('register validation failed: data should have required property \'data\'');
+            expect(body.errors[0].title).to.be.eq('data should have required property \'data\'');
             expect(body.errors[0]).to.have.ownProperty('detail');
           } catch (e) {
             return done(err || e);
@@ -128,7 +128,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.be.not.eq(null);
             expect(res.statusCode).to.be.eq(400);
             expect(err.name).to.be.eq('BadRequestError');
-            expect(body.errors[0].status).to.be.eq('ValidationError');
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
             expect(body.errors[0].title).to.be.eq('validation token must be present in query.token');
             expect(body.errors[0].code).to.be.eq(400);
           } catch (e) {
@@ -150,7 +150,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.be.not.eq(null);
             expect(res.statusCode).to.be.eq(403);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
-            expect(body.errors[0].title).to.be.eq('HttpStatusError: could not decode token');
+            expect(body.errors[0].title).to.be.eq('could not decode token');
             expect(body.errors[0].code).to.be.eq(403);
             expect(this.amqp.publishAndWait.calledWithExactly('users.activate', {
               token: 'invalidtoken',
@@ -221,7 +221,7 @@ describe('Unit Tests', function testSuite() {
             expect(res.statusCode).to.be.eq(400);
             expect(body).to.have.ownProperty('errors');
             expect(body.errors[0].status).to.be.eq('ValidationError');
-            expect(body.errors[0].title).to.be.eq('challenge validation failed: data should have required property \'data\'');
+            expect(body.errors[0].title).to.be.eq('data should have required property \'data\'');
             expect(body.errors[0]).to.have.ownProperty('detail');
           } catch (e) {
             return done(e);
@@ -272,7 +272,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(401);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
-            expect(body.errors[0].title).to.be.eq('HttpStatusError: authorization required');
+            expect(body.errors[0].title).to.be.eq('authorization required');
           } catch (e) {
             return done(e);
           }
@@ -298,7 +298,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(403);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
-            expect(body.errors[0].title).to.be.eq('HttpStatusError: you are not authorized to perform this action');
+            expect(body.errors[0].title).to.be.eq('you are not authorized to perform this action');
           } catch (e) {
             return done(e);
           }
@@ -345,7 +345,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(401);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
-            expect(body.errors[0].title).to.be.eq('HttpStatusError: authorization required');
+            expect(body.errors[0].title).to.be.eq('authorization required');
           } catch (e) {
             return done(e);
           }
@@ -373,7 +373,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(403);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
-            expect(body.errors[0].title).to.be.eq('HttpStatusError: you can only get information about yourself via /me endpoint');
+            expect(body.errors[0].title).to.be.eq('you can only get information about yourself via /me endpoint');
           } catch (e) {
             return done(e);
           }
@@ -400,7 +400,7 @@ describe('Unit Tests', function testSuite() {
           try {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(400);
-            expect(body.errors[0].status).to.be.eq('ValidationError');
+            expect(body.errors[0].status).to.be.eq('HttpStatusError');
             expect(body.errors[0].title).to.be.eq('query.filter and query.sortBy must be uri encoded, and query.filter must be a valid JSON object');
           } catch (e) {
             return done(e);
@@ -470,7 +470,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(401);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
-            expect(body.errors[0].title).to.be.eq('HttpStatusError: authorization required');
+            expect(body.errors[0].title).to.be.eq('authorization required');
           } catch (e) {
             return done(e);
           }
@@ -523,7 +523,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(401);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
-            expect(body.errors[0].title).to.be.eq('HttpStatusError: authorization required');
+            expect(body.errors[0].title).to.be.eq('authorization required');
           } catch (e) {
             return done(e);
           }
@@ -551,7 +551,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(403);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
-            expect(body.errors[0].title).to.be.eq('HttpStatusError: you can only get information about yourself via /me endpoint');
+            expect(body.errors[0].title).to.be.eq('you can only get information about yourself via /me endpoint');
           } catch (e) {
             return done(e);
           }
@@ -637,7 +637,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(403);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
-            expect(body.errors[0].title).to.be.eq('HttpStatusError: incorrect password');
+            expect(body.errors[0].title).to.be.eq('incorrect password');
           } catch (e) {
             return done(e);
           }
@@ -773,7 +773,7 @@ describe('Unit Tests', function testSuite() {
               expect(err).to.not.be.eq(null);
               expect(res.statusCode).to.be.eq(403);
               expect(body.errors[0].status).to.be.eq('HttpStatusError');
-              expect(body.errors[0].title).to.be.eq('HttpStatusError: could not decode token');
+              expect(body.errors[0].title).to.be.eq('could not decode token');
               expect(this.amqp.publishAndWait.calledOnce).to.be.eq(true);
             } catch (e) {
               return done(e);
@@ -800,7 +800,7 @@ describe('Unit Tests', function testSuite() {
               expect(err).to.not.be.eq(null);
               expect(res.statusCode).to.be.eq(401);
               expect(body.errors[0].status).to.be.eq('HttpStatusError');
-              expect(body.errors[0].title).to.be.eq('HttpStatusError: authorization required');
+              expect(body.errors[0].title).to.be.eq('authorization required');
             } catch (e) {
               return done(e);
             }
@@ -975,7 +975,7 @@ describe('Unit Tests', function testSuite() {
             expect(err).to.not.be.eq(null);
             expect(res.statusCode).to.be.eq(403);
             expect(body.errors[0].status).to.be.eq('HttpStatusError');
-            expect(body.errors[0].title).to.be.eq('HttpStatusError: insufficient right to perform this operation');
+            expect(body.errors[0].title).to.be.eq('insufficient right to perform this operation');
           } catch (e) {
             return done(e);
           }

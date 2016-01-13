@@ -105,7 +105,7 @@ exports.get = {
       })
       .catch(function validationError(err) {
         req.log.error('input error', err);
-        throw new Errors.ValidationError('query.filter and query.sortBy must be uri encoded, and query.filter must be a valid JSON object', 400);
+        throw new Errors.HttpStatusError(400, 'query.filter and query.sortBy must be uri encoded, and query.filter must be a valid JSON object');
       })
       .then(function validateMessage(message) {
         return validator.validate(ROUTE_NAME, message);
