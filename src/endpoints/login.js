@@ -37,6 +37,7 @@ const ROUTE_NAME = 'login';
  * @apiUse ValidationError
  * @apiUse ForbiddenResponse
  * @apiUse UserNotFoundError
+ * @apiUse PreconditionFailedError
  * @apiUse LockedError
  * @apiUse TooManyRequestsError
  *
