@@ -35,11 +35,13 @@ ld.mixin(require('mm-lodash'));
  * @apiUse ForbiddenResponse
  * @apiUse ValidationError
  *
- * @apiParam (Query) {Number{0..}} [offset]         how many users to skip
- * @apiParam (Query) {Number{1..100}} [limit]       how many users to return per page
- * @apiParam (Query) {String} [filter]              `encodeURIComponent(JSON.stringify(filterObject))`, pass it as value. `#` - filters by username, other keys - by allowed
- * 																		          		metadata
- * @apiParam (Query) {String} [sortBy]              `encodeURIComponent(sortBy)`, if not specified, sorts by username, otherwise by metadata field passed here
+ * @apiParam (Query) {Number{0..}} [offset] how many users to skip
+ * @apiParam (Query) {Number{1..100}} [limit] how many users to return per page
+ * @apiParam (Query) {String} [filter] `encodeURIComponent(JSON.stringify(filterObject))`,
+ * 																		pass it as value. `#` - filters by username, other keys - by allowed
+ * 																		metadata
+ * @apiParam (Query) {String} [sortBy] `encodeURIComponent(sortBy)`, if not specified, sorts by username,
+ * 																		otherwise by metadata field passed here
  * @apiParam (Query) {String="ASC","DESC"} [order]  sorting order, defaults to "ASC", case-insensitive
  *
  * @apiSuccess (Code 200) {Object}   meta              response meta information
@@ -84,7 +86,7 @@ ld.mixin(require('mm-lodash'));
  */
 exports.get = {
   path: '/',
-  middleware: [ 'auth' ],
+  middleware: ['auth'],
   handlers: {
     '1.0.0': function list(req, res, next) {
       if (!req.user.isAdmin()) {

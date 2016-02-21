@@ -2,7 +2,8 @@
   "extends": "airbnb/base",
   "parser": "babel-eslint",
   "rules": {
-    "max-len": [2, 150]
+    "max-len": [2, 150],
+    "no-param-reassign": [2, {"props": false}]
   },
   "plugins": [
     "mocha"
