@@ -55,6 +55,30 @@
  * 		}
  */
 
+ /**
+  * @apiDefine ExpectationFailedError
+  *
+  * @apiError (Code 417) {Object}    meta            response meta information
+  * @apiError (Code 417) {String}    meta.id         request id
+  * @apiError (Code 417) {Object[]}  errors          array of errors
+  * @apiError (Code 417) {String}    errors.status   text code of error
+  * @apiError (Code 417) {String}    errors.title    short error description
+  * @apiError (Code 417) {String}    errors.code     code of error
+  *
+  * @apiErrorExample {json} ExpectationFailedError:
+  * 		HTTP/1.1 417 Expectation Failed
+  * 		{
+  * 			"meta": {
+  * 				"id": "request-id"
+  * 			},
+  * 			"errors": [{
+  * 				"status": "HttpStatusError",
+  * 				"code": 417,
+  * 				"title": "alias was already assigned",
+  * 			}]
+  * 		}
+  */
+
 /**
  * @apiDefine ForbiddenResponse
  *
@@ -102,6 +126,30 @@
  * 			}]
  * 		}
  */
+
+ /**
+  * @apiDefine ConflictError
+  *
+  * @apiError (Code 409) {Object}    meta           response meta information
+  * @apiError (Code 409) {String}    meta.id        request id
+  * @apiError (Code 409) {Object[]}  errors         array of errors
+  * @apiError (Code 409) {String}    errors.status  text code of error
+  * @apiError (Code 409) {String}    errors.title   short error description
+  * @apiError (Code 409) {String}    errors.code    code of error
+  *
+  * @apiErrorExample {json} ConflictError:
+  * 		HTTP/1.1 409 Conflict
+  * 		{
+  * 			"meta": {
+  * 				"id": "request-id"
+  * 			},
+  * 			"errors": [{
+  * 				"status": "HttpStatusError",
+  * 				"code": 409,
+  * 				"title": "xxx already taken",
+  * 			}]
+  * 		}
+  */
 
 /**
  * @apiDefine PreconditionFailedError
