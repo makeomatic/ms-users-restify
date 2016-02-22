@@ -3,7 +3,9 @@
   "parser": "babel-eslint",
   "rules": {
     "max-len": [2, 150],
-    "no-param-reassign": [2, {"props": false}]
+    "no-param-reassign": [2, {"props": false}],
+    "prefer-arrow-callback": 0,
+    "newline-per-chained-call": 0
   },
   "plugins": [
     "mocha"

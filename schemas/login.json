@@ -14,7 +14,7 @@
           "enum": [ "user" ]
         },
         "id": {
-          "$ref": "users-common#/definitions/username"
+          "$ref": "users-common#/definitions/login"
         },
         "attributes": {
           "type": "object",

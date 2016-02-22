@@ -1,6 +1,11 @@
 {
   "id": "users-common",
   "definitions": {
+    "login": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 50
+    },
     "username": {
       "type": "string",
       "minLength": 6,

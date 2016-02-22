@@ -7,6 +7,8 @@ const config = require('../config.js');
 const { getRoute, getTimeout, getAudience } = config;
 const ROUTE_NAME = 'register';
 
+const WHITE_LIST = ['firstName', 'lastName', 'companyName', 'country', 'city', 'gender', 'birthday', 'phone'];
+
 /**
  * Transform body into ms-users message
  * @param  {Request} req
@@ -25,14 +27,15 @@ function transformBody(req, input) {
 
   const { country } = body;
   if (country && !countryData.info(country, 'ISO3')) {
-    const err = 'country name must be specified as ISO3. Please refer to https://github.com/therebelrobot/countryjs#info for a complete list of codes';
+    const err = `country name must be specified as ISO3.
+    Please refer to https://github.com/therebelrobot/countryjs#info for a complete list of codes`;
     throw new Errors.ValidationError(err, 400, 'data.country');
   }
 
   return {
     username: body.id,
     password,
-    metadata: ld.pick(attributes, [ 'firstName', 'lastName', 'companyName', 'country', 'city', 'gender', 'birthday', 'phone' ]),
+    metadata: ld.pick(attributes, WHITE_LIST),
     activate: config.usersRequireActivate !== true,
     audience: getAudience(),
     ipaddress: proxyaddr(req, config.trustProxy),
@@ -108,7 +111,8 @@ exports.post = {
           return req.amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
             .then(reply => {
               if (reply.requiresActivation) {
-                return res.send(202);
+                res.send(202);
+                return false;
               }
 
               res.meta = { jwt: reply.jwt };
@@ -117,6 +121,7 @@ exports.post = {
               };
 
               res.send(201, config.models.User.transform(reply.user, true));
+              return false;
             });
         })
         .asCallback(next);
