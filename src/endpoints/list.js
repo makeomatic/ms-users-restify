@@ -5,6 +5,7 @@ const config = require('../config.js');
 const { getRoute, getAudience, getTimeout } = config;
 const ld = require('lodash').runInContext();
 const { stringify: qs } = require('querystring');
+const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 // current route
 const ROUTE_NAME = 'list';
@@ -89,13 +90,12 @@ exports.get = {
   middleware: ['auth'],
   handlers: {
     '1.0.0': function list(req, res, next) {
-      if (!req.user.isAdmin()) {
-        return next(new Errors.HttpStatusError(403, 'you can only get information about yourself via /me endpoint'));
-      }
-
-      return Promise.try(function verifyRights() {
+      return Promise
+      .try(function verify() {
         const { order, filter, offset, limit, sortBy } = req.query;
         const parsedFilter = filter && JSON.parse(decodeURIComponent(filter)) || undefined;
+        const isPublic = req.user.isAdmin() ? hasOwnProperty.call(req.query, 'pub') : true;
+
         return ld.compactObject({
           order: (order || 'ASC').toUpperCase(),
           offset: offset && +offset || undefined,
@@ -103,6 +103,7 @@ exports.get = {
           filter: parsedFilter || {},
           criteria: sortBy && decodeURIComponent(sortBy) || undefined,
           audience: getAudience(),
+          public: isPublic,
         });
       })
       .catch(function validationError(err) {
@@ -144,7 +145,7 @@ exports.get = {
 
         const { User } = config.models;
         res.send(answer.users.map(function remapUser(user) {
-          return User.transform({ username: user.id, metadata: user.metadata });
+          return User.transform({ username: user.id, public: message.public, metadata: user.metadata });
         }));
       })
       .asCallback(next);

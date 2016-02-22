@@ -1,4 +1,3 @@
-const Errors = require('common-errors');
 const config = require('../config.js');
 const { getRoute, getAudience, getTimeout } = require('../config.js');
 const ROUTE_NAME = 'getMetadata';
@@ -58,29 +57,27 @@ const ROUTE_NAME = 'getMetadata';
  */
 exports.get = {
   path: '/:id',
-  middleware: [ 'auth' ],
+  middleware: ['auth'],
   handlers: {
     '1.0.0': function me(req, res, next) {
       if (req.params.id === 'me') {
-        return next(`users.me.get`);
-      }
-
-      if (!req.user.isAdmin()) {
-        return next(new Errors.HttpStatusError(403, 'you can only get information about yourself via /me endpoint'));
+        return next('users.me.get');
       }
 
       const message = {
         username: req.params.id,
         audience: getAudience(),
+        public: !req.user.isAdmin(),
       };
 
       return req.amqp
         .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
         .then(reply => {
           res.send(config.models.User.transform({
-            username: message.username,
+            ...message,
             metadata: reply,
           }));
+          return false;
         })
         .asCallback(next);
     },
