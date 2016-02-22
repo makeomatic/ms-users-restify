@@ -22,6 +22,7 @@ const config = {
       getMetadata: 'getMetadata',
       updateMetadata: 'updateMetadata',
       list: 'list',
+      alias: 'alias',
     },
     timeouts: {
       register: 5000,
@@ -36,6 +37,7 @@ const config = {
       getMetadata: 5000,
       updateMetadata: 5000,
       list: 5000,
+      alias: 5000,
     },
     audience: '*.localhost',
   },
@@ -71,7 +73,7 @@ exports.reconfigure = function init(conf = {}) {
  */
 exports.getRoute = function getRoute(name) {
   const { users } = config;
-  return [users.prefix, users.postfix[name]].join('.');
+  return [users.prefix, users.postfix[name] || name].join('.');
 };
 
 /**
