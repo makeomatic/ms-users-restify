@@ -28,7 +28,7 @@ const { getRoute, getTimeout } = config;
  *     curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
  *       -H 'Accept-Encoding: gzip, deflate' -H 'Authorization: JWT realjwttoken' \
  *       -H 'Content-Type: application/vnd.api+json' \
- *       "https://api-users.sandbox.matic.ninja/api/users/v%40example.com/ban" \
+ *       "https://api-users.sandbox.matic.ninja/api/users/me/alias" \
  *       -d '{
  *         "data": {
  *           "type": "user",
