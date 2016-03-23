@@ -63,7 +63,7 @@ exports.post = {
           const jwt = reply.jwt;
 
           if (is.fn(res.setCookie)) {
-            res.setCookie('jwt', jwt, config.api.cookies);
+            res.setCookie('jwt', jwt, config.cookies);
           }
 
           res.meta = { jwt };
