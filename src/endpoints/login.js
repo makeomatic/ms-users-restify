@@ -3,6 +3,7 @@ const proxyaddr = require('proxy-addr');
 const config = require('../config.js');
 const { getRoute, getTimeout, getAudience } = config;
 const ROUTE_NAME = 'login';
+const is = require('is');
 
 /**
  * @api {post} /login Sign in
@@ -59,7 +60,13 @@ exports.post = {
           return req.amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) });
         })
         .then(reply => {
-          res.meta = { jwt: reply.jwt };
+          const jwt = reply.jwt;
+
+          if (is.fn(res.setCookie)) {
+            res.setCookie('jwt', jwt, config.api.cookies);
+          }
+
+          res.meta = { jwt };
           res.links = {
             self: config.host + req.path(),
           };
