@@ -1,6 +1,7 @@
 const config = require('../config.js');
 const { getRoute, getTimeout, getAudience } = config;
 const ROUTE_NAME = 'logout';
+const is = require('is');
 
 /**
  * @api {post} /logout Invalidates JWT token
@@ -35,6 +36,10 @@ exports.post = {
       return req.amqp
         .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
         .then(function sendResponse() {
+          if (is.fn(res.setCookie)) {
+            res.setCookie('jwt', '', { ...config.cookies, maxAge: 0, expires: new Date(1) });
+          }
+
           res.send(204);
         })
         .asCallback(next);
