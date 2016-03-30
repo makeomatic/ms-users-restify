@@ -7,7 +7,7 @@ const ROUTE_NAME = 'getMetadata';
  * @apiVersion 1.0.0
  * @apiName GetUser
  * @apiGroup Users
- * @apiPermission admin
+ * @apiPermission none
  *
  * @apiDescription Returns user object and it's metadata by user'd id
  *
@@ -57,17 +57,18 @@ const ROUTE_NAME = 'getMetadata';
  */
 exports.get = {
   path: '/:id',
-  middleware: ['auth'],
+  middleware: ['conditional-auth'],
   handlers: {
     '1.0.0': function me(req, res, next) {
       if (req.params.id === 'me') {
         return next('users.me.get');
       }
 
+      const isPublic = !(req.user && req.user.isAdmin());
       const message = {
         username: req.params.id,
         audience: getAudience(),
-        public: !req.user.isAdmin(),
+        public: isPublic,
       };
 
       return req.amqp

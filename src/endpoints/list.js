@@ -87,14 +87,14 @@ ld.mixin(require('mm-lodash'));
  */
 exports.get = {
   path: '/',
-  middleware: ['auth'],
+  middleware: ['conditional-auth'],
   handlers: {
     '1.0.0': function list(req, res, next) {
       return Promise
       .try(function verify() {
         const { order, filter, offset, limit, sortBy } = req.query;
         const parsedFilter = filter && JSON.parse(decodeURIComponent(filter)) || undefined;
-        const isPublic = req.user.isAdmin() ? hasOwnProperty.call(req.query, 'pub') : true;
+        const isPublic = req.user && req.user.isAdmin() ? hasOwnProperty.call(req.query, 'pub') : true;
 
         return ld.compactObject({
           order: (order || 'ASC').toUpperCase(),
