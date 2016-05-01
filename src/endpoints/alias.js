@@ -22,7 +22,7 @@ const { getRoute, getTimeout } = config;
  * @apiParam (Body) {Object}        data                      container
  * @apiParam (Body) {String="user"} data.type                 we are modifying this object type, must be 'user'
  * @apiParam (Body) {Object}        data.attributes           container for attributes
- * @apiParam (Body) {String{3..15}} data.attributes.alias     chosen alias, symbols allowed: [a-zA-Z.0-9]{3,15}
+ * @apiParam (Body) {String{3..15}} data.attributes.alias     chosen alias, symbols allowed: [a-z.0-9]{3,15}, forced to lowerCase()
  *
  * @apiExample {curl} Example usage:
  *     curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
@@ -62,7 +62,7 @@ exports.patch = {
           const { attributes } = data;
           const message = {
             username: req.user.id,
-            alias: attributes.alias,
+            alias: attributes.alias.toLowerCase(),
             remoteip: proxyaddr(req, config.trustProxy),
           };
 

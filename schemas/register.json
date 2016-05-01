@@ -50,6 +50,11 @@
             },
             "phone": {
               "$ref": "users-common#/definitions/phone"
+            },
+            "alias": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 15
             }
           }
         }

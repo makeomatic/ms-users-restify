@@ -35,6 +35,7 @@ function transformBody(req, input) {
   return {
     username: body.id,
     password,
+    alias: attributes.alias && attributes.alias.toLowerCase() || undefined,
     metadata: ld.pick(attributes, WHITE_LIST),
     activate: config.usersRequireActivate !== true,
     audience: getAudience(),
@@ -65,6 +66,7 @@ function transformBody(req, input) {
  * @apiParam (Body) {String="female","male","other"} [data.attributes.gender]       user's gender
  * @apiParam (Body) {String="YYYY.MM.DD"}            [data.attributes.birthday]     birthday in the format of YYYY.MM.DD
  * @apiParam (Body) {String{6..20}}                  [data.attributes.phone]        user's phone, no validation
+ * @apiParam (Body) {String{3..15}}                  [data.attributes.alias]        user's alias
  *
  * @apiExample {curl} Example usage:
  *     curl -i -X POST -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
@@ -85,7 +87,8 @@ function transformBody(req, input) {
  *             "city": "Las Vegas",
  *             "gender": "male",
  *             "birthday": "1934.09.25",
- *             "phone": "(440)0000000"
+ *             "phone": "(440)0000000",
+ *             "alias": "bond007"
  *           }
  *         }
  *       }'
