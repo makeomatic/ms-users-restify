@@ -5,8 +5,9 @@ const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
 const config = require('../config.js');
 const { getRoute, getTimeout, getAudience } = config;
-const ROUTE_NAME = 'register';
 
+// constants
+const ROUTE_NAME = 'register';
 const WHITE_LIST = ['firstName', 'lastName', 'companyName', 'country', 'city', 'gender', 'birthday', 'phone'];
 
 /**
@@ -20,9 +21,15 @@ function transformBody(req, input) {
 
   const body = input.data;
   const { attributes } = body;
-  const { password, passwordRepeat } = attributes;
-  if (password !== passwordRepeat) {
-    throw new Errors.ValidationError('supplied passwords do not match', 400, '["data.password","data.passwordRepeat"]');
+  const { password } = attributes;
+  const { autoGeneratePassword } = config;
+
+  if (autoGeneratePassword && password) {
+    throw new Errors.ValidationError('password is auto-generated, do not pass it', 400);
+  }
+
+  if (!autoGeneratePassword && !password) {
+    throw new Errors.ValidationError('password must be provided', 400);
   }
 
   const { country } = body;
@@ -32,15 +39,23 @@ function transformBody(req, input) {
     throw new Errors.ValidationError(err, 400, 'data.country');
   }
 
-  return {
+  const message = {
     username: body.id,
-    password,
-    alias: attributes.alias && attributes.alias.toLowerCase() || undefined,
     metadata: ld.pick(attributes, WHITE_LIST),
     activate: config.usersRequireActivate !== true,
     audience: getAudience(),
     ipaddress: proxyaddr(req, config.trustProxy),
   };
+
+  if (password) {
+    message.password = password;
+  }
+
+  if (attributes.alias) {
+    message.alias = attributes.alias.toLowerCase();
+  }
+
+  return message;
 }
 
 /**

@@ -19,10 +19,19 @@
         "attributes": {
           "type": "object",
           "additionalProperties": false,
-          "required": [ "password", "passwordRepeat", "firstName", "lastName" ],
+          "required": ["firstName", "lastName"],
           "properties": {
             "password": {
-              "$ref": "users-common#/definitions/password"
+              "allOf": [
+                {
+                  "$ref": "users-common#/definitions/password"
+                },
+                {
+                  "constant": {
+                    "$data": "1/passwordRepeat"
+                  }
+                }
+              ]
             },
             "passwordRepeat": {
               "$ref": "users-common#/definitions/password"

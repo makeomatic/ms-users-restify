@@ -48,6 +48,7 @@ const config = {
   host: 'http://localhost:8080',
   queryTokenField: 'token',
   usersRequireActivate: true,
+  autoGeneratePassword: false,
   generateNewPassword: false,
 };
 
