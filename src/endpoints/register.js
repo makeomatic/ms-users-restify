@@ -24,11 +24,11 @@ function transformBody(req, input) {
   const { password } = attributes;
   const { autoGeneratePassword } = config;
 
-  if (autoGeneratePassword && password) {
+  if (autoGeneratePassword === true && password) {
     throw new Errors.ValidationError('password is auto-generated, do not pass it', 400);
   }
 
-  if (!autoGeneratePassword && !password) {
+  if (autoGeneratePassword === false && !password) {
     throw new Errors.ValidationError('password must be provided', 400);
   }
 

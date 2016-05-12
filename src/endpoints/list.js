@@ -91,64 +91,60 @@ exports.get = {
   handlers: {
     '1.0.0': function list(req, res, next) {
       return Promise
-      .try(function verify() {
-        const { order, filter, offset, limit, sortBy } = req.query;
-        const parsedFilter = filter && JSON.parse(decodeURIComponent(filter)) || undefined;
-        const isPublic = req.user && req.user.isAdmin() ? hasOwnProperty.call(req.query, 'pub') : true;
+        .try(function verify() {
+          const { order, filter, offset, limit, sortBy } = req.query;
+          const parsedFilter = filter && JSON.parse(decodeURIComponent(filter)) || undefined;
+          const isPublic = req.user && req.user.isAdmin() ? hasOwnProperty.call(req.query, 'pub') : true;
 
-        return ld.compactObject({
-          order: (order || 'ASC').toUpperCase(),
-          offset: offset && +offset || undefined,
-          limit: limit && +limit || 10,
-          filter: parsedFilter || {},
-          criteria: sortBy && decodeURIComponent(sortBy) || undefined,
-          audience: getAudience(),
-          public: isPublic,
-        });
-      })
-      .catch(function validationError(err) {
-        req.log.error('input error', err);
-        throw new Errors.HttpStatusError(400, 'query.filter and query.sortBy must be uri encoded, and query.filter must be a valid JSON object');
-      })
-      .then(function validateMessage(message) {
-        return validator.validate(ROUTE_NAME, message);
-      })
-      .then(function askAMQP(message) {
-        return Promise.join(
+          return ld.compactObject({
+            order: (order || 'ASC').toUpperCase(),
+            offset: offset && +offset || undefined,
+            limit: limit && +limit || 10,
+            filter: parsedFilter || {},
+            criteria: sortBy && decodeURIComponent(sortBy) || undefined,
+            audience: getAudience(),
+            public: isPublic,
+          });
+        })
+        .catch(function validationError(err) {
+          req.log.error('input error', err);
+          throw new Errors.HttpStatusError(400, 'query.filter and query.sortBy must be uri encoded, and query.filter must be a valid JSON object');
+        })
+        .then(message => validator.validate(ROUTE_NAME, message))
+        .then(message => Promise.join(
           req.amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) }),
           message
-        );
-      })
-      .spread(function remapAnswer(answer, message) {
-        const { page, pages, cursor } = answer;
-        const { order, filter, offset, limit, criteria: sortBy } = message;
-        const selfQS = {
-          order,
-          limit,
-          offset: offset || 0,
-          sortBy,
-          filter: encodeURIComponent(JSON.stringify(filter)),
-        };
+        ))
+        .spread(function remapAnswer(answer, message) {
+          const { page, pages, cursor } = answer;
+          const { order, filter, offset, limit, criteria: sortBy } = message;
+          const selfQS = {
+            order,
+            limit,
+            offset: offset || 0,
+            sortBy,
+            filter: encodeURIComponent(JSON.stringify(filter)),
+          };
 
-        res.meta = { page, pages };
+          res.meta = { page, pages };
 
-        const base = config.host + config.users.attachPoint;
-        res.links = {
-          self: `${base}?${qs(selfQS)}`,
-        };
+          const base = config.host + config.users.attachPoint;
+          res.links = {
+            self: `${base}?${qs(selfQS)}`,
+          };
 
-        if (page < pages) {
-          const nextQS = Object.assign({}, selfQS, { offset: cursor });
-          res.meta.cursor = cursor;
-          res.links.next = `${base}?${qs(nextQS)}`;
-        }
+          if (page < pages) {
+            const nextQS = Object.assign({}, selfQS, { offset: cursor });
+            res.meta.cursor = cursor;
+            res.links.next = `${base}?${qs(nextQS)}`;
+          }
 
-        const { User } = config.models;
-        res.send(answer.users.map(function remapUser(user) {
-          return User.transform({ username: user.id, public: message.public, metadata: user.metadata });
-        }));
-      })
-      .asCallback(next);
+          const { User } = config.models;
+          res.send(answer.users.map(function remapUser(user) {
+            return User.transform({ username: user.id, public: message.public, metadata: user.metadata });
+          }));
+        })
+        .asCallback(next);
     },
   },
 };
