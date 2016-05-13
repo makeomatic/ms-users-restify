@@ -1,6 +1,6 @@
 {
   "name": "ms-users-restify",
-  "version": "0.14.1",
+  "version": "0.14.3",
   "description": "Core of the microservice for handling users",
   "main": "./lib/index.js",
   "scripts": {

@@ -42,7 +42,7 @@ function transformBody(req, input) {
   const message = {
     username: body.id,
     metadata: ld.pick(attributes, WHITE_LIST),
-    activate: config.usersRequireActivate !== true,
+    activate: config.usersRequireActivate !== true || !password,
     audience: getAudience(),
     ipaddress: proxyaddr(req, config.trustProxy),
   };
