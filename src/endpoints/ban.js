@@ -51,7 +51,7 @@ const { getRoute, getTimeout } = config;
  */
 exports.patch = {
   path: '/:id/ban',
-  middleware: [ 'auth' ],
+  middleware: ['auth'],
   handlers: {
     '1.0.0': function requestBan(req, res, next) {
       if (!req.user.isAdmin()) {
