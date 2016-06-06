@@ -64,7 +64,7 @@ exports.get = {
         return next('users.me.get');
       }
 
-      const isPublic = !(req.user && req.user.isAdmin());
+      const isPublic = !(req.user && (req.user.isAdmin() || req.user.id === req.params.id));
       const message = {
         username: req.params.id,
         audience: getAudience(),
