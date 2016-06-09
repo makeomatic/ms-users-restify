@@ -1,6 +1,6 @@
 {
   "name": "ms-users-restify",
-  "version": "0.15.1",
+  "version": "0.16.0",
   "description": "Core of the microservice for handling users",
   "main": "./lib/index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "homepage": "https://github.com/makeomatic/ms-users-restify#readme",
   "dependencies": {
     "bluebird": "^3.4.0",
-    "common-errors": "^0.5.3",
+    "common-errors": "^0.5.7",
     "countryjs": "^1.5.0",
     "debug": "^2.2.0",
     "glob": "^7.0.0",
@@ -31,8 +31,8 @@
     "proxy-addr": "^1.0.10"
   },
   "peerDependencies": {
-    "ms-validation": "^1.x.x",
-    "restify-utils": "^0.x.x"
+    "ms-validation": "~2.x.x",
+    "restify-utils": "~0.x.x"
   },
   "devDependencies": {
     "babel-cli": "^6.4.0",
@@ -45,12 +45,12 @@
     "eslint": "^2.2.0",
     "eslint-config-airbnb-base": "^3.0.0",
     "eslint-plugin-import": "^1.8.0",
-    "eslint-plugin-mocha": "^2.0.0",
+    "eslint-plugin-mocha": "^3.0.0",
     "mocha": "^2.3.4",
-    "ms-validation": "^1.0.1",
+    "ms-validation": "^2.0.0",
     "restify": "^4.0.3",
     "restify-formatter-jsonapi": "^0.2.1",
-    "restify-utils": "^0.10.3",
+    "restify-utils": "^0.13.0",
     "server-destroy": "^1.0.1",
     "sinon": "^1.17.2"
   },
