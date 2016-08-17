@@ -45,6 +45,9 @@
             "companyName": {
               "$ref": "users-common#/definitions/str-150"
             },
+            "additionalInformation": {
+              "$ref": "users-common#/definitions/str-250"
+            },
             "country": {
               "$ref": "users-common#/definitions/country"
             },
@@ -64,8 +67,16 @@
               "type": "string",
               "minLength": 3,
               "maxLength": 15
+            },
+            "org": {
+              "type": "boolean",
+              "default": false
             }
-          }
+          },
+          "switch": [{
+            "if": { "properties": { "org": { "constant": true } } },
+            "then": { "required": [ "companyName", "additionalInformation", "country", "city", "phone" ] }
+          }]
         }
       }
     }

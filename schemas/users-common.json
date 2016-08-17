@@ -27,6 +27,11 @@
       "minLength": 1,
       "maxLength": 150
     },
+    "str-250": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 250
+    },
     "country": {
       "type": "string",
       "minLength": 3,

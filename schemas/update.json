@@ -37,6 +37,9 @@
             "companyName": {
               "$ref": "users-common#/definitions/str-150"
             },
+            "additionalInformation": {
+              "$ref": "users-common#/definitions/str-250"
+            },
             "country": {
               "$ref": "users-common#/definitions/country"
             },

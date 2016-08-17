@@ -28,6 +28,7 @@ const ROUTE_NAME = 'updateMetadata';
  * @apiParam (Body) {String{1..150}}    data.attributes.firstName   user's first name
  * @apiParam (Body) {String{1..150}}    data.attributes.lastName    user's surname
  * @apiParam (Body) {String{1..150}}    data.attributes.companyName user's company name
+ * @apiParam (Body) {String{1..250}}    data.attributes.additionalInformation additional information for user/company
  * @apiParam (Body) {String{3}}         data.attributes.country     user's country in ISO3 format, ex: "USA"
  * @apiParam (Body) {String}            data.attributes.plan        when plan is changed by these means, it only reflects a
  * new name, nothing else is changed

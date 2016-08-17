@@ -8,7 +8,18 @@ const { getRoute, getTimeout, getAudience } = config;
 
 // constants
 const ROUTE_NAME = 'register';
-const WHITE_LIST = ['firstName', 'lastName', 'companyName', 'country', 'city', 'gender', 'birthday', 'phone'];
+const WHITE_LIST = [
+  'firstName',
+  'lastName',
+  'companyName',
+  'additionalInformation',
+  'country',
+  'city',
+  'gender',
+  'birthday',
+  'phone',
+  'org',
+];
 
 /**
  * Transform body into ms-users message
