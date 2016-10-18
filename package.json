@@ -5,10 +5,11 @@
   "main": "./lib/index.js",
   "scripts": {
     "compile": "babel -d ./lib ./src",
-    "prepublish": "npm run compile",
+    "prepublish": "npm run snyk-protect && npm run compile",
     "test": "npm run lint && mocha",
     "lint": "eslint ./src",
-    "doc": "apidoc -i ./src -o ./docs"
+    "doc": "apidoc -i ./src -o ./docs",
+    "snyk-protect": "snyk protect"
   },
   "repository": {
     "type": "git",
@@ -28,7 +29,8 @@
     "glob": "^7.0.5",
     "is": "^3.1.0",
     "mm-lodash": "^1.2.5",
-    "proxy-addr": "^1.0.10"
+    "proxy-addr": "^1.0.10",
+    "snyk": "^1.19.1"
   },
   "peerDependencies": {
     "ms-validation": "~3.x.x",
@@ -59,5 +61,6 @@
     "name": "Users family documentation",
     "description": "Documentation for user-based actions",
     "url": "https://api-users.sandbox.matic.ninja/api/users"
-  }
+  },
+  "snyk": true
 }
