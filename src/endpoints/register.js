@@ -12,13 +12,19 @@ const WHITE_LIST = [
   'firstName',
   'lastName',
   'companyName',
-  'additionalInformation',
-  'country',
+  'addressLine1',
+  'addressLine2',
+  'zipCode',
   'city',
+  'state',
+  'country',
   'gender',
   'birthday',
   'phone',
+  'website',
   'org',
+  'shortDescription',
+  'longDescription',
 ];
 
 /**
@@ -86,13 +92,20 @@ function transformBody(req, input) {
  * @apiParam (Body) {String{6..50}}                  data.attributes.passwordRepeat make sure that user typed in the same password
  * @apiParam (Body) {String{1..150}}                 data.attributes.firstName      user's given name
  * @apiParam (Body) {String{1..150}}                 data.attributes.lastName       user's surname
- * @apiParam (Body) {String{1..150}}                 data.attributes.companyName    user's company name
- * @apiParam (Body) {String{3}}                      [data.attributes.country]      ISO3 country code, e.g "USA" or "RUS"
- * @apiParam (Body) {String{1..150}}                 [data.attributes.city]         free-form input city name
+ * @apiParam (Body) {String{3..15}}                  data.attributes.alias        user's alias
  * @apiParam (Body) {String="female","male","other"} [data.attributes.gender]       user's gender
  * @apiParam (Body) {String="YYYY.MM.DD"}            [data.attributes.birthday]     birthday in the format of YYYY.MM.DD
  * @apiParam (Body) {String{6..20}}                  [data.attributes.phone]        user's phone, no validation
- * @apiParam (Body) {String{3..15}}                  [data.attributes.alias]        user's alias
+ * @apiParam (Body) {String{1..150}}                 [data.attributes.companyName] user's company name
+ * @apiParam (Body) {String{1..155}}                 [data.attributes.shortDescription]    company's short description
+ * @apiParam (Body) {String{1..250}}                 [data.attributes.longDescription]     company's long description
+ * @apiParam (Body) {String}                         [data.attributes.website]     user's website
+ * @apiParam (Body) {String{1..50}}                  [data.attributes.addressLine1]        user's address line #1
+ * @apiParam (Body) {String{1..50}}                  [data.attributes.addressLine2]        user's address line #2
+ * @apiParam (Body) {String{1..50}}                  [data.attributes.city]        user's city
+ * @apiParam (Body) {String{1..15}}                  [data.attributes.zipCode]     user's zipCode
+ * @apiParam (Body) {String{2}}                      [data.attributes.state]       user's state 2-letter code, ex: "AL"
+ * @apiParam (Body) {String{3}}                      [data.attributes.country]     user's country in ISO3 format, ex: "USA"
  *
  * @apiExample {curl} Example usage:
  *     curl -i -X POST -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
