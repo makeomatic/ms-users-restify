@@ -1,5 +1,6 @@
 const validator = require('../validator.js');
 const { getRoute, getTimeout } = require('../config.js');
+
 const ROUTE_NAME = 'challenge';
 
 /**

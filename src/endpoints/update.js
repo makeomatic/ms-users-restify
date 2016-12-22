@@ -1,7 +1,8 @@
-const Errors = require('common-errors');
+const { intersection } = require('lodash');
+const { HttpStatusError } = require('common-errors');
 const validator = require('../validator.js');
-
 const config = require('../config.js');
+
 const { getAudience, getRoute, getTimeout } = config;
 const ROUTE_NAME = 'updateMetadata';
 
@@ -101,6 +102,19 @@ const ROUTE_NAME = 'updateMetadata';
  *
  */
 /* eslint-enable */
+
+const ORG_REQUIRED_PROPS = [
+  'companyName',
+  'addressLine1',
+  'zipCode',
+  'state',
+  'city',
+  'country',
+  'phone',
+  'shortDescription',
+  'longDescription',
+];
+
 exports.patch = {
   path: '/:id',
   middleware: ['auth'],
@@ -114,10 +128,11 @@ exports.patch = {
           const inputId = req.params.id;
           const id = inputId === 'me' ? req.user.id : inputId;
           const isAdmin = req.user.isAdmin();
+          const isOrg = req.user.isOrg();
           const { attributes, remove, incr } = data;
 
           if (!isAdmin && (inputId !== 'me' || incr || (attributes && attributes.plan))) {
-            throw new Errors.HttpStatusError(403, 'insufficient right to perform this operation');
+            throw new HttpStatusError(403, 'insufficient right to perform this operation');
           }
 
           const message = {
@@ -127,10 +142,30 @@ exports.patch = {
           };
 
           if (attributes) {
+            // BC
+            if (attributes.additionalInformation) {
+              if (!attributes.longDescription) {
+                attributes.longDescription = attributes.additionalInformation;
+              }
+
+              delete attributes.additionalInformation;
+            }
+
             message.metadata.$set = attributes;
           }
 
           if (remove) {
+            if (isOrg) {
+              const requiredPropsIn = intersection(remove, ORG_REQUIRED_PROPS);
+              const hasRequiredProps = !!requiredPropsIn.length;
+
+              if (hasRequiredProps) {
+                throw new HttpStatusError(400,
+                  `Could not remove required properties for organisation: ${requiredPropsIn.join}`
+                );
+              }
+            }
+
             message.metadata.$remove = remove;
           }
 

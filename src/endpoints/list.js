@@ -2,9 +2,10 @@ const Promise = require('bluebird');
 const validator = require('../validator.js');
 const Errors = require('common-errors');
 const config = require('../config.js');
-const { getRoute, getAudience, getTimeout } = config;
 const ld = require('lodash').runInContext();
 const { stringify: qs } = require('querystring');
+
+const { getRoute, getAudience, getTimeout } = config;
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 // current route
@@ -93,15 +94,15 @@ exports.get = {
       return Promise
         .try(function verify() {
           const { order, filter, offset, limit, sortBy } = req.query;
-          const parsedFilter = filter && JSON.parse(decodeURIComponent(filter)) || undefined;
+          const parsedFilter = filter ? JSON.parse(decodeURIComponent(filter)) : undefined;
           const isPublic = req.user && req.user.isAdmin() ? hasOwnProperty.call(req.query, 'pub') : true;
 
           return ld.compactObject({
             order: (order || 'ASC').toUpperCase(),
-            offset: offset && +offset || undefined,
-            limit: limit && +limit || 10,
+            offset: offset ? +offset : undefined,
+            limit: limit ? +limit : 10,
             filter: parsedFilter || {},
-            criteria: sortBy && decodeURIComponent(sortBy) || undefined,
+            criteria: sortBy ? decodeURIComponent(sortBy) : undefined,
             audience: getAudience(),
             public: isPublic,
           });

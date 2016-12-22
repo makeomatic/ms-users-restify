@@ -1,5 +1,6 @@
 const Errors = require('common-errors');
 const config = require('../config.js');
+
 const ROUTE_NAME = 'remove';
 const { getRoute, getTimeout } = config;
 

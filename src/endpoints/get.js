@@ -1,5 +1,6 @@
 const config = require('../config.js');
 const { getRoute, getAudience, getTimeout } = require('../config.js');
+
 const ROUTE_NAME = 'getMetadata';
 
 /**

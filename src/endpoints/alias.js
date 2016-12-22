@@ -1,6 +1,7 @@
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
 const config = require('../config.js');
+
 const ROUTE_NAME = 'alias';
 const { getRoute, getTimeout } = config;
 

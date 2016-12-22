@@ -4,6 +4,7 @@ const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
 const auth = Promise.promisify(require('../middleware/auth.js'));
 const config = require('../config.js');
+
 const { getRoute, getTimeout } = config;
 
 /**

@@ -74,6 +74,9 @@
             "shortDescription": {
               "$ref": "users-common#/definitions/str-155"
             },
+            "additionalInformation": {
+              "$ref": "users-common#/definitions/str-250"
+            },
             "plan": {
               "$ref": "users-common#/definitions/str-50"
             },
@@ -97,9 +100,11 @@
               "website",
               "shortDescription",
               "longDescription",
+              "additionalInformation",
               "addressLine1",
               "addressLine2",
               "city",
+              "state",
               "zipCode",
               "country"
             ]

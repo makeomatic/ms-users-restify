@@ -4,6 +4,7 @@ const countryData = require('countryjs');
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
 const config = require('../config.js');
+
 const { getRoute, getTimeout, getAudience } = config;
 
 // constants
@@ -70,6 +71,11 @@ function transformBody(req, input) {
 
   if (attributes.alias) {
     message.alias = attributes.alias.toLowerCase();
+  }
+
+  // BC, remap additionalInformation to longDescription if it is not provided
+  if (attributes.additionalInformation && !message.metadata.longDescription) {
+    message.metadata.longDescription = attributes.additionalInformation;
   }
 
   return message;

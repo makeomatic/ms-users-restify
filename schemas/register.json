@@ -90,6 +90,9 @@
             },
             "shortDescription": {
               "$ref": "users-common#/definitions/str-155"
+            },
+            "additionalInformation": {
+              "$ref": "users-common#/definitions/str-250"
             }
           },
           "switch": [{
@@ -100,7 +103,6 @@
                 "longDescription",
                 "shortDescription",
                 "addressLine1",
-                "addressLine2",
                 "zipCode",
                 "city",
                 "state",

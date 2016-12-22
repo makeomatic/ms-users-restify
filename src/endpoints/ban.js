@@ -2,6 +2,7 @@ const Errors = require('common-errors');
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
 const config = require('../config.js');
+
 const ROUTE_NAME = 'ban';
 const { getRoute, getTimeout } = config;
 

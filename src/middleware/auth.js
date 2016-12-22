@@ -1,6 +1,7 @@
 const Errors = require('common-errors');
 const proxyaddr = require('proxy-addr');
 const config = require('../config.js');
+
 const { getRoute, getTimeout, getAudience } = config;
 
 // cached vars
