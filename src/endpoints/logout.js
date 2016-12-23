@@ -1,7 +1,8 @@
+const is = require('is');
 const config = require('../config.js');
+
 const { getRoute, getTimeout, getAudience } = config;
 const ROUTE_NAME = 'logout';
-const is = require('is');
 
 /**
  * @api {post} /logout Invalidates JWT token

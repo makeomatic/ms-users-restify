@@ -1,9 +1,10 @@
+const is = require('is');
 const validator = require('../validator.js');
 const proxyaddr = require('proxy-addr');
 const config = require('../config.js');
+
 const { getRoute, getTimeout, getAudience } = config;
 const ROUTE_NAME = 'login';
-const is = require('is');
 
 /**
  * @api {post} /login Sign in

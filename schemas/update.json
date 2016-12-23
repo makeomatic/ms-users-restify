@@ -34,26 +34,48 @@
             "lastName": {
               "$ref": "users-common#/definitions/str-50"
             },
-            "companyName": {
-              "$ref": "users-common#/definitions/str-150"
-            },
-            "additionalInformation": {
-              "$ref": "users-common#/definitions/str-250"
-            },
-            "country": {
-              "$ref": "users-common#/definitions/country"
-            },
-            "city": {
-              "$ref": "users-common#/definitions/str-150"
-            },
             "gender": {
               "$ref": "users-common#/definitions/gender"
             },
             "birthday": {
               "$ref": "users-common#/definitions/birthday"
             },
+            "addressLine1": {
+              "$ref": "users-common#/definitions/str-50"
+            },
+            "addressLine2": {
+              "$ref": "users-common#/definitions/str-50"
+            },
+            "zipCode": {
+              "$ref": "users-common#/definitions/str-15"
+            },
+            "state": {
+              "$ref": "users-common#/definitions/state"
+            },
+            "city": {
+              "$ref": "users-common#/definitions/str-150"
+            },
+            "country": {
+              "$ref": "users-common#/definitions/country"
+            },
             "phone": {
               "$ref": "users-common#/definitions/phone"
+            },
+            "website": {
+              "type": "string",
+              "format": "uri"
+            },
+            "companyName": {
+              "$ref": "users-common#/definitions/str-150"
+            },
+            "longDescription": {
+              "$ref": "users-common#/definitions/str-250"
+            },
+            "shortDescription": {
+              "$ref": "users-common#/definitions/str-155"
+            },
+            "additionalInformation": {
+              "$ref": "users-common#/definitions/str-250"
             },
             "plan": {
               "$ref": "users-common#/definitions/str-50"
@@ -70,7 +92,22 @@
           "minItems": 1,
           "items": {
             "type": "string",
-            "enum": [ "companyName", "country", "city", "gender", "birthday", "phone" ]
+            "enum": [
+              "companyName",
+              "gender",
+              "birthday",
+              "phone",
+              "website",
+              "shortDescription",
+              "longDescription",
+              "additionalInformation",
+              "addressLine1",
+              "addressLine2",
+              "city",
+              "state",
+              "zipCode",
+              "country"
+            ]
           }
         },
         "incr": {

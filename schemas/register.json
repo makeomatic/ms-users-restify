@@ -36,23 +36,16 @@
             "passwordRepeat": {
               "$ref": "users-common#/definitions/password"
             },
+            "alias": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 15
+            },
             "firstName": {
               "$ref": "users-common#/definitions/str-50"
             },
             "lastName": {
               "$ref": "users-common#/definitions/str-50"
-            },
-            "companyName": {
-              "$ref": "users-common#/definitions/str-150"
-            },
-            "additionalInformation": {
-              "$ref": "users-common#/definitions/str-250"
-            },
-            "country": {
-              "$ref": "users-common#/definitions/country"
-            },
-            "city": {
-              "$ref": "users-common#/definitions/str-150"
             },
             "gender": {
               "$ref": "users-common#/definitions/gender"
@@ -60,22 +53,63 @@
             "birthday": {
               "$ref": "users-common#/definitions/birthday"
             },
+            "addressLine1": {
+              "$ref": "users-common#/definitions/str-50"
+            },
+            "addressLine2": {
+              "$ref": "users-common#/definitions/str-50"
+            },
+            "zipCode": {
+              "$ref": "users-common#/definitions/str-50"
+            },
+            "state": {
+              "$ref": "users-common#/definitions/state"
+            },
+            "city": {
+              "$ref": "users-common#/definitions/str-150"
+            },
+            "country": {
+              "$ref": "users-common#/definitions/country"
+            },
             "phone": {
               "$ref": "users-common#/definitions/phone"
             },
-            "alias": {
+            "website": {
               "type": "string",
-              "minLength": 3,
-              "maxLength": 15
+              "format": "uri"
             },
             "org": {
               "type": "boolean",
               "default": false
+            },
+            "companyName": {
+              "$ref": "users-common#/definitions/str-150"
+            },
+            "longDescription": {
+              "$ref": "users-common#/definitions/str-250"
+            },
+            "shortDescription": {
+              "$ref": "users-common#/definitions/str-155"
+            },
+            "additionalInformation": {
+              "$ref": "users-common#/definitions/str-250"
             }
           },
           "switch": [{
             "if": { "properties": { "org": { "constant": true } } },
-            "then": { "required": [ "companyName", "additionalInformation", "country", "city", "phone" ] }
+            "then": {
+              "required": [
+                "companyName",
+                "longDescription",
+                "shortDescription",
+                "addressLine1",
+                "zipCode",
+                "city",
+                "state",
+                "country",
+                "phone"
+              ]
+            }
           }]
         }
       }

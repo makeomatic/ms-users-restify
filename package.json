@@ -1,6 +1,6 @@
 {
   "name": "ms-users-restify",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Core of the microservice for handling users",
   "main": "./lib/index.js",
   "scripts": {
@@ -32,7 +32,8 @@
   },
   "peerDependencies": {
     "ms-validation": "~3.x.x",
-    "restify-utils": "~1.x.x"
+    "restify-utils": "~1.x.x",
+    "lodash": "~4.x.x"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
@@ -50,7 +51,7 @@
     "ms-validation": "^3.0.0",
     "restify": "^4.1.1",
     "restify-formatter-jsonapi": "^0.3.1",
-    "restify-utils": "^1.0.0",
+    "restify-utils": "^1.4.0",
     "server-destroy": "^1.0.1",
     "sinon": "^1.17.5"
   },

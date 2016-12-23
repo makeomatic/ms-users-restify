@@ -1,5 +1,6 @@
 const Errors = require('common-errors');
 const config = require('../config.js');
+
 const { getAudience, getRoute, getTimeout } = config;
 const ROUTE_NAME = 'activate';
 

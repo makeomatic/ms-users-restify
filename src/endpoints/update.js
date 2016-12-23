@@ -1,10 +1,12 @@
-const Errors = require('common-errors');
+const { intersection } = require('lodash');
+const { HttpStatusError } = require('common-errors');
 const validator = require('../validator.js');
-
 const config = require('../config.js');
+
 const { getAudience, getRoute, getTimeout } = config;
 const ROUTE_NAME = 'updateMetadata';
 
+/* eslint-disable */
 /**
  * @api {patch} /:id Updates user's data
  * @apiVersion 1.0.0
@@ -28,14 +30,21 @@ const ROUTE_NAME = 'updateMetadata';
  * @apiParam (Body) {String{1..150}}    data.attributes.firstName   user's first name
  * @apiParam (Body) {String{1..150}}    data.attributes.lastName    user's surname
  * @apiParam (Body) {String{1..150}}    data.attributes.companyName user's company name
- * @apiParam (Body) {String{1..250}}    data.attributes.additionalInformation additional information for user/company
+ * @apiParam (Body) {String{1..155}}    data.attributes.shortDescription    company's short description
+ * @apiParam (Body) {String{1..250}}    data.attributes.longDescription     company's long description
+ * @apiParam (Body) {String}            data.attributes.website     user's website
+ * @apiParam (Body) {String{1..50}}     data.attributes.addressLine1        user's address line #1
+ * @apiParam (Body) {String{1..50}}     data.attributes.addressLine2        user's address line #2
+ * @apiParam (Body) {String{1..50}}     data.attributes.city        user's city
+ * @apiParam (Body) {String{1..15}}     data.attributes.zipCode     user's zipCode
+ * @apiParam (Body) {String{2}}         data.attributes.state       user's state 2-letter code, ex: "AL"
  * @apiParam (Body) {String{3}}         data.attributes.country     user's country in ISO3 format, ex: "USA"
  * @apiParam (Body) {String}            data.attributes.plan        when plan is changed by these means, it only reflects a
  * new name, nothing else is changed
  * @apiParam (Body) {String="female", "male", "other"}    data.attributes.gender    user's gender
  * @apiParam (Body) {String="YYYY.MM.DD"}                 data.attributes.birthday  user's birthday, eg. 1955.10.23
  * @apiParam (Body) {String{6..20}}                       data.attributes.phone     user's phone number
- * @apiParam (Body) {String[]="companyName", "country", "city", "gender", "birthday", "phone"} data.remove fields that should be removed from metadata
+ * @apiParam (Body) {String[]="companyName", "country", "city", "gender", "birthday", "phone", "website", "addressLine1", "addressLine2", "state", "zipCode", "shortDescription", "longDescription"} data.remove fields that should be removed from metadata
  *
  * @apiExample {curl} Example usage (admin):
  *     curl -i -X PATCH -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
@@ -92,6 +101,20 @@ const ROUTE_NAME = 'updateMetadata';
  *     HTTP/1.1 204 No Content
  *
  */
+/* eslint-enable */
+
+const ORG_REQUIRED_PROPS = [
+  'companyName',
+  'addressLine1',
+  'zipCode',
+  'state',
+  'city',
+  'country',
+  'phone',
+  'shortDescription',
+  'longDescription',
+];
+
 exports.patch = {
   path: '/:id',
   middleware: ['auth'],
@@ -105,10 +128,11 @@ exports.patch = {
           const inputId = req.params.id;
           const id = inputId === 'me' ? req.user.id : inputId;
           const isAdmin = req.user.isAdmin();
+          const isOrg = req.user.isOrg();
           const { attributes, remove, incr } = data;
 
           if (!isAdmin && (inputId !== 'me' || incr || (attributes && attributes.plan))) {
-            throw new Errors.HttpStatusError(403, 'insufficient right to perform this operation');
+            throw new HttpStatusError(403, 'insufficient right to perform this operation');
           }
 
           const message = {
@@ -118,10 +142,30 @@ exports.patch = {
           };
 
           if (attributes) {
+            // BC
+            if (attributes.additionalInformation) {
+              if (!attributes.longDescription) {
+                attributes.longDescription = attributes.additionalInformation;
+              }
+
+              delete attributes.additionalInformation;
+            }
+
             message.metadata.$set = attributes;
           }
 
           if (remove) {
+            if (isOrg) {
+              const requiredPropsIn = intersection(remove, ORG_REQUIRED_PROPS);
+              const hasRequiredProps = !!requiredPropsIn.length;
+
+              if (hasRequiredProps) {
+                throw new HttpStatusError(400,
+                  `Could not remove required properties for organisation: ${requiredPropsIn.join}`
+                );
+              }
+            }
+
             message.metadata.$remove = remove;
           }
 
