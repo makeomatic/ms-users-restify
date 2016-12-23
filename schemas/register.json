@@ -19,7 +19,7 @@
         "attributes": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["alias", "firstName", "lastName"],
+          "required": ["firstName", "lastName"],
           "properties": {
             "password": {
               "allOf": [
