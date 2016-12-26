@@ -105,7 +105,6 @@
                 "addressLine1",
                 "zipCode",
                 "city",
-                "state",
                 "country",
                 "phone"
               ]
