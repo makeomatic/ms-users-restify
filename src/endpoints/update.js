@@ -107,7 +107,6 @@ const ORG_REQUIRED_PROPS = [
   'companyName',
   'addressLine1',
   'zipCode',
-  'state',
   'city',
   'country',
   'phone',
@@ -161,7 +160,7 @@ exports.patch = {
 
               if (hasRequiredProps) {
                 throw new HttpStatusError(400,
-                  `Could not remove required properties for organisation: ${requiredPropsIn.join}`
+                  `Could not remove required properties for organisation: ${requiredPropsIn.join(requiredPropsIn)}`
                 );
               }
             }
