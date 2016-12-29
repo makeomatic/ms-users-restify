@@ -93,6 +93,14 @@
             },
             "additionalInformation": {
               "$ref": "users-common#/definitions/str-250"
+            },
+            "profileLogo": {
+              "type": "string",
+              "format": "uri"
+            },
+            "profileCover": {
+              "type": "string",
+              "format": "uri"
             }
           },
           "switch": [{
