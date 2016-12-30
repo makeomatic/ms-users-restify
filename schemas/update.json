@@ -62,8 +62,7 @@
               "$ref": "users-common#/definitions/phone"
             },
             "website": {
-              "type": "string",
-              "format": "uri"
+              "$ref": "users-common#/definitions/str-50"
             },
             "companyName": {
               "$ref": "users-common#/definitions/str-150"
