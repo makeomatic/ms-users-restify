@@ -83,6 +83,14 @@
               "type": "number",
               "minimum": 0,
               "maximum": 10000
+            },
+            "profileLogo": {
+              "type": "string",
+              "format": "uri"
+            },
+            "profileCover": {
+              "type": "string",
+              "format": "uri"
             }
           }
         },
@@ -105,7 +113,9 @@
               "city",
               "state",
               "zipCode",
-              "country"
+              "country",
+              "profileLogo",
+              "profileCover"
             ]
           }
         },
