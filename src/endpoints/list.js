@@ -88,9 +88,13 @@ ld.mixin(require('mm-lodash'));
  */
 exports.get = {
   path: '/',
-  middleware: ['conditional-auth'],
+  middleware: ['auth'],
   handlers: {
     '1.0.0': function list(req, res, next) {
+      if (!req.user.isAdmin()) {
+        return next(new Errors.HttpStatusError(403, 'you are not authorized to perform this action'));
+      }
+
       return Promise
         .try(function verify() {
           const { order, filter, offset, limit, sortBy } = req.query;
