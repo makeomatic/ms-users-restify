@@ -144,7 +144,7 @@ function transformBody(req, input) {
  * @apiUse TooManyRequestsError
  *
  * @apiSuccessExample {json} Success-Response:
- * 		HTTP/1.1 202 Accepted
+ *     HTTP/1.1 202 Accepted
  */
 exports.post = {
   path: '/',
@@ -157,7 +157,7 @@ exports.post = {
         })
         .then(function attemptToRegister(message) {
           return req.amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
-            .then(reply => {
+            .then((reply) => {
               if (reply.requiresActivation) {
                 res.send(202);
                 return false;

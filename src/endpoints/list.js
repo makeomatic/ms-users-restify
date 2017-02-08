@@ -26,7 +26,7 @@ ld.mixin(require('mm-lodash'));
  *
  * @apiHeader (Authorization) {String} Authorization JWT :accessToken
  * @apiHeaderExample Authorization-Example:
- * 		"Authorization: JWT myreallyniceandvalidjsonwebtoken"
+ *     "Authorization: JWT myreallyniceandvalidjsonwebtoken"
  *
  * @apiExample {curl} Example usage:
  *     curl -i -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' -H 'Accept-Encoding: gzip, deflate' \
@@ -40,10 +40,10 @@ ld.mixin(require('mm-lodash'));
  * @apiParam (Query) {Number{0..}} [offset] how many users to skip
  * @apiParam (Query) {Number{1..100}} [limit] how many users to return per page
  * @apiParam (Query) {String} [filter] `encodeURIComponent(JSON.stringify(filterObject))`,
- * 																		pass it as value. `#` - filters by username, other keys - by allowed
- * 																		metadata
+ *                                     pass it as value. `#` - filters by username, other keys - by allowed
+ *                                     metadata
  * @apiParam (Query) {String} [sortBy] `encodeURIComponent(sortBy)`, if not specified, sorts by username,
- * 																		otherwise by metadata field passed here
+ *                                     otherwise by metadata field passed here
  * @apiParam (Query) {String="ASC","DESC"} [order]  sorting order, defaults to "ASC", case-insensitive
  *
  * @apiSuccess (Code 200) {Object}   meta              response meta information
@@ -62,28 +62,28 @@ ld.mixin(require('mm-lodash'));
  * @apiSuccess (Code 200) {String}   links.next        link to the next page
  *
  * @apiSuccessExample {json} Success-Users:
- * 		HTTP/1.1 200 OK
- * 		{
- * 			"meta": {
- * 				"id": "request-id",
- * 				"page": 10,
- * 				"pages": 10
- * 			},
- * 			"data": [{
- * 				"type": "user",
- * 				"id": "user@example.com",
- * 				"attributes": {
- * 					"firstName": "Anna",
- * 					"lastName": "Maria"
- * 				},
- * 				"links": {
- * 					"self": "https://localhost:443/api/users/user%40example.com"
- * 				}
- * 			}],
- * 			"links": {
- * 				"self": "https://localhost:443/api/users?cursor=91&limit=10"
- * 			}
- * 		}
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "meta": {
+ *         "id": "request-id",
+ *         "page": 10,
+ *         "pages": 10
+ *       },
+ *       "data": [{
+ *         "type": "user",
+ *         "id": "user@example.com",
+ *         "attributes": {
+ *           "firstName": "Anna",
+ *           "lastName": "Maria"
+ *         },
+ *         "links": {
+ *           "self": "https://localhost:443/api/users/user%40example.com"
+ *         }
+ *       }],
+ *       "links": {
+ *         "self": "https://localhost:443/api/users?cursor=91&limit=10"
+ *       }
+ *     }
  *
  */
 exports.get = {

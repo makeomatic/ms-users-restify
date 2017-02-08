@@ -44,7 +44,7 @@ exports.post = {
 
       return req.amqp
         .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
-        .then(reply => {
+        .then((reply) => {
           res.meta = { jwt: reply.jwt };
           res.links = {
             self: config.host + req.path(),

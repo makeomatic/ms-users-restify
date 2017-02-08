@@ -14,7 +14,7 @@ const ROUTE_NAME = 'getMetadata';
  *
  * @apiHeader (Authorization) {String} Authorization JWT :accessToken
  * @apiHeaderExample Authorization-Example:
- * 		"Authorization: JWT myreallyniceandvalidjsonwebtoken"
+ *     "Authorization: JWT myreallyniceandvalidjsonwebtoken"
  *
  * @apiParam (Params) {String} id username to be returned
  *
@@ -37,23 +37,23 @@ const ROUTE_NAME = 'getMetadata';
  * @apiSuccess (Code 200) {String} data.links.self   link to the user resource
  *
  * @apiSuccessExample {json} Success-User:
- * 		HTTP/1.1 200 OK
- * 		{
- * 			"meta": {
- * 				"id": "request-id",
- * 			},
- * 			"data": {
- * 				"type": "user",
- * 				"id": "user@example.com",
- * 				"attributes": {
- * 					"firstName": "Anna",
- * 					"lastName": "Maria"
- * 				},
- * 				"links": {
- * 					"self": "https://localhost:443/api/users/user%40example.com"
- * 				}
- * 			}
- * 		}
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "meta": {
+ *         "id": "request-id",
+ *       },
+ *       "data": {
+ *         "type": "user",
+ *         "id": "user@example.com",
+ *         "attributes": {
+ *           "firstName": "Anna",
+ *           "lastName": "Maria"
+ *         },
+ *         "links": {
+ *           "self": "https://localhost:443/api/users/user%40example.com"
+ *         }
+ *       }
+ *     }
  *
  */
 exports.get = {
@@ -74,7 +74,7 @@ exports.get = {
 
       return req.amqp
         .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
-        .then(reply => {
+        .then((reply) => {
           res.send(config.models.User.transform({
             ...message,
             metadata: reply,

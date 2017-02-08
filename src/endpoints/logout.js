@@ -15,14 +15,14 @@ const ROUTE_NAME = 'logout';
  *
  * @apiHeader (Authorization) {String} Authorization JWT :accessToken
  * @apiHeaderExample Authorization-Example:
- * 		"Authorization: JWT myreallyniceandvalidjsonwebtoken"
+ *     "Authorization: JWT myreallyniceandvalidjsonwebtoken"
  *
  * @apiExample {curl} Example usage:
  *     curl -i -X POST -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \
  *       "https://api-users.sandbox.matic.ninja/api/users/logout"
  *
  * @apiSuccessExample {json} Success:
- * 		HTTP/1.1 204 No Content
+ *     HTTP/1.1 204 No Content
  */
 exports.post = {
   path: '/logout',

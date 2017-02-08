@@ -15,7 +15,7 @@ const { getRoute, getTimeout } = config;
  *
  * @apiHeader (Authorization) {String} Authorization JWT :accessToken
  * @apiHeaderExample Authorization-Example:
- * 		"Authorization: JWT myreallyniceandvalidjsonwebtoken"
+ *     "Authorization: JWT myreallyniceandvalidjsonwebtoken"
  *
  * @apiParam (Params) {String} username username we are trying to remove
  *

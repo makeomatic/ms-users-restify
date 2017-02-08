@@ -13,22 +13,22 @@
  * @apiError (Code 400) {String}    errors.detail.field   input field, which was involved
  *
  * @apiErrorExample {json} ValidationError:
- * 		HTTP/1.1 400 BadRequest
- * 		{
- * 			"meta": {
- * 				"id": "request-id"
- * 			},
- * 			"errors": [{
- * 				"status": "ValidationError",
- * 				"code": 400,
- * 				"title": "short description of the errors",
- * 				"detail": [{
- * 					"text": "invalid input type",
- * 					"code": 400,
- * 					"field": "data.type"
- * 				}]
- * 			}]
- * 		}
+ *     HTTP/1.1 400 BadRequest
+ *     {
+ *       "meta": {
+ *         "id": "request-id"
+ *       },
+ *       "errors": [{
+ *         "status": "ValidationError",
+ *         "code": 400,
+ *         "title": "short description of the errors",
+ *         "detail": [{
+ *           "text": "invalid input type",
+ *           "code": 400,
+ *           "field": "data.type"
+ *         }]
+ *       }]
+ *     }
  */
 
 /**
@@ -42,17 +42,17 @@
  * @apiError (Code 401) {String}    errors.code     code of error
  *
  * @apiErrorExample {json} UnauthorizedError:
- * 		HTTP/1.1 401 Unauthorized
- * 		{
- * 			"meta": {
- * 				"id": "request-id"
- * 			},
- * 			"errors": [{
- * 				"status": "HttpStatusError",
- * 				"code": 401,
- * 				"title": "you must authorize to use this endpoint",
- * 			}]
- * 		}
+ *     HTTP/1.1 401 Unauthorized
+ *     {
+ *       "meta": {
+ *         "id": "request-id"
+ *       },
+ *       "errors": [{
+ *         "status": "HttpStatusError",
+ *         "code": 401,
+ *         "title": "you must authorize to use this endpoint",
+ *       }]
+ *     }
  */
 
  /**
@@ -66,17 +66,17 @@
   * @apiError (Code 417) {String}    errors.code     code of error
   *
   * @apiErrorExample {json} ExpectationFailedError:
-  * 		HTTP/1.1 417 Expectation Failed
-  * 		{
-  * 			"meta": {
-  * 				"id": "request-id"
-  * 			},
-  * 			"errors": [{
-  * 				"status": "HttpStatusError",
-  * 				"code": 417,
-  * 				"title": "alias was already assigned",
-  * 			}]
-  * 		}
+  *     HTTP/1.1 417 Expectation Failed
+  *     {
+  *       "meta": {
+  *         "id": "request-id"
+  *       },
+  *       "errors": [{
+  *         "status": "HttpStatusError",
+  *         "code": 417,
+  *         "title": "alias was already assigned",
+  *       }]
+  *     }
   */
 
 /**
@@ -90,17 +90,17 @@
  * @apiError (Code 403) {String}    errors.code    code of error
  *
  * @apiErrorExample {json} ForbiddenResponse:
- * 		HTTP/1.1 403 Forbidden
- * 		{
- * 			"meta": {
- * 				"id": "request-id"
- * 			},
- * 			"errors": [{
- * 				"status": "HttpStatusError",
- * 				"code": 403,
- * 				"title": "insufficient rights to perform this operation",
- * 			}]
- * 		}
+ *     HTTP/1.1 403 Forbidden
+ *     {
+ *       "meta": {
+ *         "id": "request-id"
+ *       },
+ *       "errors": [{
+ *         "status": "HttpStatusError",
+ *         "code": 403,
+ *         "title": "insufficient rights to perform this operation",
+ *       }]
+ *     }
  */
 
 /**
@@ -114,17 +114,17 @@
  * @apiError (Code 404) {String}    errors.code    code of error
  *
  * @apiErrorExample {json} UserNotFoundError:
- * 		HTTP/1.1 404 NotFound
- * 		{
- * 			"meta": {
- * 				"id": "request-id"
- * 			},
- * 			"errors": [{
- * 				"status": "HttpStatusError",
- * 				"code": 404,
- * 				"title": "user test@example.com not found",
- * 			}]
- * 		}
+ *     HTTP/1.1 404 NotFound
+ *     {
+ *       "meta": {
+ *         "id": "request-id"
+ *       },
+ *       "errors": [{
+ *         "status": "HttpStatusError",
+ *         "code": 404,
+ *         "title": "user test@example.com not found",
+ *       }]
+ *     }
  */
 
  /**
@@ -138,17 +138,17 @@
   * @apiError (Code 409) {String}    errors.code    code of error
   *
   * @apiErrorExample {json} ConflictError:
-  * 		HTTP/1.1 409 Conflict
-  * 		{
-  * 			"meta": {
-  * 				"id": "request-id"
-  * 			},
-  * 			"errors": [{
-  * 				"status": "HttpStatusError",
-  * 				"code": 409,
-  * 				"title": "xxx already taken",
-  * 			}]
-  * 		}
+  *     HTTP/1.1 409 Conflict
+  *     {
+  *       "meta": {
+  *         "id": "request-id"
+  *       },
+  *       "errors": [{
+  *         "status": "HttpStatusError",
+  *         "code": 409,
+  *         "title": "xxx already taken",
+  *       }]
+  *     }
   */
 
 /**
@@ -162,17 +162,17 @@
  * @apiError (Code 412) {String}    errors.code    code of error
  *
  * @apiErrorExample {json} PreconditionFailedError:
- * 		HTTP/1.1 412 Precondition Failed
- * 		{
- * 			"meta": {
- * 				"id": "request-id"
- * 			},
- * 			"errors": [{
- * 				"status": "HttpStatusError",
- * 				"code": 412,
- * 				"title": "user is already active",
- * 			}]
- * 		}
+ *     HTTP/1.1 412 Precondition Failed
+ *     {
+ *       "meta": {
+ *         "id": "request-id"
+ *       },
+ *       "errors": [{
+ *         "status": "HttpStatusError",
+ *         "code": 412,
+ *         "title": "user is already active",
+ *       }]
+ *     }
  *
  */
 
@@ -187,17 +187,17 @@
  * @apiError (Code 423) {String}    errors.code    code of error
  *
  * @apiErrorExample {json} LockedError:
- * 		HTTP/1.1 423 Locked
- * 		{
- * 			"meta": {
- * 				"id": "request-id"
- * 			},
- * 			"errors": [{
- * 				"status": "HttpStatusError",
- * 				"code": 423,
- * 				"title": "account has been locked",
- * 			}]
- * 		}
+ *     HTTP/1.1 423 Locked
+ *     {
+ *       "meta": {
+ *         "id": "request-id"
+ *       },
+ *       "errors": [{
+ *         "status": "HttpStatusError",
+ *         "code": 423,
+ *         "title": "account has been locked",
+ *       }]
+ *     }
  */
 
 /**
@@ -211,17 +211,17 @@
  * @apiError (Code 429) {String}    errors.code    code of error
  *
  * @apiErrorExample {json} PreconditionFailedError:
- * 		HTTP/1.1 429 Too Many Requests
- * 		{
- * 			"meta": {
- * 				"id": "request-id"
- * 			},
- * 			"errors": [{
- * 				"status": "HttpStatusError",
- * 				"code": 429,
- * 				"title": "you have requested to perform this action too many times",
- * 			}]
- * 		}
+ *     HTTP/1.1 429 Too Many Requests
+ *     {
+ *       "meta": {
+ *         "id": "request-id"
+ *       },
+ *       "errors": [{
+ *         "status": "HttpStatusError",
+ *         "code": 429,
+ *         "title": "you have requested to perform this action too many times",
+ *       }]
+ *     }
  */
 
 /**
@@ -238,22 +238,22 @@
  * @apiSuccess (Code 200) {String} data.links.self   link to the user resource
  *
  * @apiSuccessExample {json} Success-User:
- * 		HTTP/1.1 200 OK
- * 		{
- * 			"meta": {
- * 				"id": "request-id",
- * 				"jwt": "jsonwebtoken"
- * 			},
- * 			"data": {
- * 				"type": "user",
- * 				"id": "user@example.com",
- * 				"attributes": {
- * 					"firstName": "Anna",
- * 					"lastName": "Maria"
- * 				},
- * 				"links": {
- * 					"self": "https://localhost:443/api/users/user%40example.com"
- * 				}
- * 			}
- * 		}
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "meta": {
+ *         "id": "request-id",
+ *         "jwt": "jsonwebtoken"
+ *       },
+ *       "data": {
+ *         "type": "user",
+ *         "id": "user@example.com",
+ *         "attributes": {
+ *           "firstName": "Anna",
+ *           "lastName": "Maria"
+ *         },
+ *         "links": {
+ *           "self": "https://localhost:443/api/users/user%40example.com"
+ *         }
+ *       }
+ *     }
  */

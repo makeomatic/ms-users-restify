@@ -9,7 +9,7 @@
  *
  * @apiHeader (Authorization) {String} Authorization JWT :accessToken
  * @apiHeaderExample Authorization-Example:
- * 		"Authorization: JWT myreallyniceandvalidjsonwebtoken"
+ *     "Authorization: JWT myreallyniceandvalidjsonwebtoken"
  *
  * @apiExample {curl} Example usage:
  *     curl -i -H 'Accept-Version: *' -H 'Accept: application/vnd.api+json' \

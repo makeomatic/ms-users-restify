@@ -60,7 +60,7 @@ exports.post = {
 
           return req.amqp.publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) });
         })
-        .then(reply => {
+        .then((reply) => {
           const jwt = reply.jwt;
 
           if (is.fn(res.setCookie)) {

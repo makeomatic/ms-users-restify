@@ -5,7 +5,15 @@
     "max-len": [2, 150],
     "no-param-reassign": [2, {"props": false}],
     "prefer-arrow-callback": 0,
-    "newline-per-chained-call": 0
+    "newline-per-chained-call": 0,
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "never",
+      "exports": "never",
+      "functions": "never",
+    }],
+    "no-multi-assign": 0
   },
   "plugins": [
     "mocha"

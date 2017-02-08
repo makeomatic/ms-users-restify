@@ -37,7 +37,7 @@ const { getRoute, getTimeout } = config;
  * @apiUse LockedError
  *
  * @apiSuccessExample {json} Success-Response:
- * 		HTTP/1.1 202 Accepted
+ *     HTTP/1.1 202 Accepted
  */
 exports.post = {
   path: '/reset',
@@ -99,7 +99,7 @@ exports.post = {
  *
  * @apiHeader (Authorization) {String} [Authorization] JWT :accessToken
  * @apiHeaderExample Authorization-Example:
- * 		"Authorization: JWT myreallyniceandvalidjsonwebtoken"
+ *     "Authorization: JWT myreallyniceandvalidjsonwebtoken"
  *
  * @apiParam (Body - authorized) {Object}        data                            data container
  * @apiParam (Body - authorized) {String="user"} data.type                       data type

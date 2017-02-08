@@ -174,7 +174,7 @@ exports.patch = {
 
           return amqp
             .publishAndWait(getRoute(ROUTE_NAME), message, { timeout: getTimeout(ROUTE_NAME) })
-            .then(reply => {
+            .then((reply) => {
               log.debug('updateMetadata response:', reply);
               res.send(204);
             });

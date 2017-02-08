@@ -11,7 +11,9 @@ const ROUTE_NAME = 'verify';
 module.exports = function authenticateUser(req, res, next) {
   const { amqp, headers, query } = req;
   const { authorization } = headers;
+
   let jwt;
+  let accessToken = false;
 
   if (isArray(authorization)) {
     return next(new Errors.HttpStatusError(400, 'Must include only one authorization header'));
@@ -19,6 +21,9 @@ module.exports = function authenticateUser(req, res, next) {
 
   if (authorization && authorization.indexOf('JWT ') === 0) {
     jwt = authorization.slice(4);
+  } else if (authorization && authorization.indexOf('Bearer ') === 0) {
+    accessToken = true;
+    jwt = authorization.slice(7);
   } else if (query.jwt) {
     jwt = query.jwt;
   } else if (query.state) {
@@ -31,6 +36,7 @@ module.exports = function authenticateUser(req, res, next) {
 
   const message = {
     token: jwt,
+    accessToken,
     audience: getAudience(),
     remoteip: proxyaddr(req, config.trustProxy),
   };
