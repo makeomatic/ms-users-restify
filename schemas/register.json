@@ -77,6 +77,9 @@
             "website": {
               "$ref": "users-common#/definitions/str-50"
             },
+            "referral": {
+              "$ref": "users-common#/definitions/str-50"
+            },
             "org": {
               "type": "boolean",
               "default": false

@@ -39,7 +39,7 @@ function transformBody(req, input) {
 
   const body = input.data;
   const { attributes } = body;
-  const { password } = attributes;
+  const { password, referral } = attributes;
   const { autoGeneratePassword } = config;
 
   if (autoGeneratePassword === true && password) {
@@ -73,6 +73,10 @@ function transformBody(req, input) {
     message.alias = attributes.alias.toLowerCase();
   }
 
+  if (referral) {
+    message.referral = referral;
+  }
+
   // BC, remap additionalInformation to longDescription if it is not provided
   if (attributes.additionalInformation && !message.metadata.longDescription) {
     message.metadata.longDescription = attributes.additionalInformation;
@@ -98,7 +102,8 @@ function transformBody(req, input) {
  * @apiParam (Body) {String{6..50}}                  data.attributes.passwordRepeat make sure that user typed in the same password
  * @apiParam (Body) {String{1..150}}                 data.attributes.firstName      user's given name
  * @apiParam (Body) {String{1..150}}                 data.attributes.lastName       user's surname
- * @apiParam (Body) {String{3..15}}                  data.attributes.alias        user's alias
+ * @apiParam (Body) {String{3..15}}                  data.attributes.alias          user's alias
+ * @apiParam (Body) {String{1..50}}                  [data.attributes.referral]     we will pass this and determine if this is a referral registration
  * @apiParam (Body) {String="female","male","other"} [data.attributes.gender]       user's gender
  * @apiParam (Body) {String="YYYY.MM.DD"}            [data.attributes.birthday]     birthday in the format of YYYY.MM.DD
  * @apiParam (Body) {String{6..20}}                  [data.attributes.phone]        user's phone, no validation
