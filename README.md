@@ -1,5 +1,7 @@
 # Restify transport adapter for ms-users
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/makeomatic/ms-users-restify.svg)](https://greenkeeper.io/)
+
 ## Install
 
 `npm i ms-users-restify -S`
