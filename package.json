@@ -54,7 +54,7 @@
     "restify-formatter-jsonapi": "^0.3.1",
     "restify-utils": "^1.4.0",
     "server-destroy": "^1.0.1",
-    "sinon": "^1.17.5"
+    "sinon": "^2.1.0"
   },
   "apidoc": {
     "version": "1.0.0",
